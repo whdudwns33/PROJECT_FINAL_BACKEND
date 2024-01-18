@@ -40,7 +40,7 @@ public class MemberDto {
         return MemberDto.builder()
                 .memberEmail(member.getMemberEmail())
                 .phone(member.getPhone())
-                .nickName(member.getNickName())
+                .nickName(member.getMemberNickName())
                 .birth(member.getBirth())
                 .authority(member.getAuthority())
                 .build();

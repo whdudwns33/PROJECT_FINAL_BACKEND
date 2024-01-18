@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class CrawlStockSchedularService {
+    // 파이썬 크롤링 데이터 저장
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final CrawlStockRpository crawlStockRpository;

@@ -214,7 +214,7 @@ public class AuthService {
     // 닉네임 중복 체크
     public boolean isNickName(String nickName) {
         System.out.println("닉네임 : " + nickName);
-        boolean isTrue = memberRepository.existsByNickname(nickName);
+        boolean isTrue = memberRepository.existsByMemberNickName(nickName);
         log.warn("닉네임 중복 확인 {} : ", isTrue);
         return isTrue;
     }

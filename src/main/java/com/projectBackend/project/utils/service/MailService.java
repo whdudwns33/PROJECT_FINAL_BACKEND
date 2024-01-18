@@ -1,6 +1,6 @@
 package com.projectBackend.project.utils.service;
 
-import com.projectBackend.project.repository.UserRepository;
+import com.projectBackend.project.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import java.util.Random;
 @Transactional
 public class MailService {
     public static String EPW;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     @Autowired
     JavaMailSender emailsender;
     private String ePw; // 인증번호
@@ -88,7 +88,7 @@ public class MailService {
     // 그리고 bean 으로 등록해둔 javaMail 객체를 사용해서 이메일 send!!
     public boolean sendSimpleMessage(String to) throws Exception {
         // to는 email로 중복 체크를 한다.
-        boolean isTrue = userRepository.existsByUserEmail(to);
+        boolean isTrue = memberRepository.existsByMemberEmail(to);
         System.out.println("이메일 중복 체크 : " + isTrue);
         if (!isTrue) {
             ePw = createKey(); // 랜덤 인증번호 생성

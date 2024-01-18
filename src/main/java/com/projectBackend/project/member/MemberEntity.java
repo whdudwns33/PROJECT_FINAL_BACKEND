@@ -22,7 +22,7 @@ public class MemberEntity {
     String memberEmail;
     String memberPassword;
     String phone;
-    String nickName;
+    String memberNickName;
     Date birth;
     @Enumerated(EnumType.STRING)
     private Authority authority;
@@ -32,7 +32,7 @@ public class MemberEntity {
         this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
         this.phone = phone;
-        this.nickName = nickName;
+        this.memberNickName = nickName;
         this.birth = birth;
         this.authority = authority;
     }
