@@ -1,4 +1,4 @@
-package com.projectBackend.project.crawlStock;
+package com.projectBackend.project.crawling.crawlStock;
 
 import lombok.Getter;
 import lombok.Setter;

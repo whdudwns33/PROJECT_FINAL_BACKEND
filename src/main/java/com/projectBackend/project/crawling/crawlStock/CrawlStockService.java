@@ -1,4 +1,4 @@
-package com.projectBackend.project.crawlStock;
+package com.projectBackend.project.crawling.crawlStock;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
