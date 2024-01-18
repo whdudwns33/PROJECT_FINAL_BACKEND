@@ -1,17 +1,13 @@
 package com.projectBackend.project.utils.jwt;
 
-
-
-import com.projectBackend.project.dto.TokenDto;
-import com.projectBackend.project.entity.Token;
-import com.projectBackend.project.repository.TokenRepository;
+import com.projectBackend.project.constant.Authority;
+import com.projectBackend.project.utils.token.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,12 +15,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,45 +37,86 @@ public class TokenProvider {
     }
 
     // 토큰 생성
-    public TokenDto generateTokenDto(Authentication authentication) {
-        log.warn("authentication {} : ", authentication);
-        // 권한 정보 문자열 생성,
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+    public TokenDto generateTokenDto(String authoruty , Authentication authentication) {
+        if (authoruty.equals("ROLE_USER")) {
+            log.warn("authentication {} : ", authentication);
+            // 권한 정보 문자열 생성,
+            String authorities = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(","));
 
-        long now = (new Date()).getTime(); // 현재 시간
-        // 토큰 만료 시간 설정
-        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-        Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+            long now = (new Date()).getTime(); // 현재 시간
+            // 토큰 만료 시간 설정
+            Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+            Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
 
-        // 토큰 생성
-        String accessToken = io.jsonwebtoken.Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
+            // 토큰 생성
+            String accessToken = io.jsonwebtoken.Jwts.builder()
+                    .setSubject(authentication.getName())
+                    .claim(AUTHORITIES_KEY, authorities)
+                    .setExpiration(accessTokenExpiresIn)
+                    .signWith(key, SignatureAlgorithm.HS512)
+                    .compact();
 
-        // 리프레시 토큰 생성
-        String refreshToken = io.jsonwebtoken.Jwts.builder()
-                .setExpiration(refreshTokenExpiresIn)
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
-        log.warn("accessToken {} : ", accessToken);
-        log.warn("refreshToken {} : ", refreshToken);
-        // 토큰 정보를 담은 TokenDto 객체 생성
-        return TokenDto.builder()
-                .grantType(BEARER_TYPE)
-                .accessToken(accessToken)
-                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
-                .refreshToken(refreshToken)
-                .refreshTokenExpiresIn(refreshTokenExpiresIn.getTime())
-                .build();
+            // 리프레시 토큰 생성
+            String refreshToken = io.jsonwebtoken.Jwts.builder()
+                    .setExpiration(refreshTokenExpiresIn)
+                    .setSubject(authentication.getName())
+                    .claim(AUTHORITIES_KEY, authorities)
+                    .signWith(key, SignatureAlgorithm.HS512)
+                    .compact();
+            log.warn("accessToken {} : ", accessToken);
+            log.warn("refreshToken {} : ", refreshToken);
+            // 토큰 정보를 담은 TokenDto 객체 생성
+            return TokenDto.builder()
+                    .grantType(BEARER_TYPE)
+                    .accessToken(accessToken)
+                    .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                    .refreshToken(refreshToken)
+                    .refreshTokenExpiresIn(refreshTokenExpiresIn.getTime())
+                    .build();
+        } else if (authoruty.equals("ROLE_ADMIN")) {
+            log.warn("authentication {} : ", authentication);
+            // 권한 정보 문자열 생성,
+            String authorities = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(","));
+
+            long now = (new Date()).getTime(); // 현재 시간
+            // 토큰 만료 시간 설정
+            Date accessTokenExpiresIn = new Date(now + 1000 * 60 * 60 * 60);
+            Date refreshTokenExpiresIn = new Date(now + 1000 * 60 * 60 * 60);
+
+            // 토큰 생성
+            String accessToken = io.jsonwebtoken.Jwts.builder()
+                    .setSubject(authentication.getName())
+                    .claim(AUTHORITIES_KEY, authorities)
+                    .setExpiration(accessTokenExpiresIn)
+                    .signWith(key, SignatureAlgorithm.HS512)
+                    .compact();
+
+            // 리프레시 토큰 생성
+            String refreshToken = io.jsonwebtoken.Jwts.builder()
+                    .setExpiration(refreshTokenExpiresIn)
+                    .setSubject(authentication.getName())
+                    .claim(AUTHORITIES_KEY, authorities)
+                    .signWith(key, SignatureAlgorithm.HS512)
+                    .compact();
+            log.warn("accessToken {} : ", accessToken);
+            log.warn("refreshToken {} : ", refreshToken);
+            // 토큰 정보를 담은 TokenDto 객체 생성
+            return TokenDto.builder()
+                    .grantType(BEARER_TYPE)
+                    .accessToken(accessToken)
+                    .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                    .refreshToken(refreshToken)
+                    .refreshTokenExpiresIn(refreshTokenExpiresIn.getTime())
+                    .build();
+        }
+        else {
+            return null;
+        }
     }
-
 
 
     // 토큰 복호화
