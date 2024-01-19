@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserDetails createUserDetails (MemberEntity member) {
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getAuthority().toString());
         return new User(
-                String.valueOf(member.getMemberEmail()),
+                member.getMemberEmail(),
                 member.getMemberPassword(),
                 Collections.singleton(grantedAuthority)
         );

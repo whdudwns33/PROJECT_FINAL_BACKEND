@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -197,6 +198,27 @@ public class AuthService {
         String randomPassword = uuidAsString.substring(0, 10);
 
         return randomPassword;
+    }
+
+    // 리프레쉬 토큰 반환
+    public String returnRefreshToken (String accessToken) {
+        String email = tokenProvider.getUserEmail(accessToken);
+        Optional<MemberEntity> memberEntity = memberRepository.findByMemberEmail(email);
+        if (memberEntity.isPresent()) {
+            MemberEntity member = memberEntity.get();
+            Long id = member.getId();
+            String refreshToken = tokenRepository.findByMember_Id(id);
+            if (refreshToken != null) {
+                log.info("refreshToken info : {}", refreshToken);
+                return refreshToken;
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
     }
 
     // 이메일 중복 체크

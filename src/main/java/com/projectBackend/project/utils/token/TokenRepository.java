@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TokenRepository extends JpaRepository<TokenEntity, Long> {
+    String findByMember_Id(Long memberId);
     void deleteByMember_Id(Long memberId);
 }

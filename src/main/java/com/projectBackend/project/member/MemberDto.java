@@ -31,7 +31,7 @@ public class MemberDto {
                 .phone(phone)
                 .nickName(nickName)
                 .birth(birth)
-                .authority(authority)
+                .authority(Authority.ROLE_USER)
                 .build();
     }
 

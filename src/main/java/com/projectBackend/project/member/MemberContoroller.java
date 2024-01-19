@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberContoroller {
     // MemberContoroller는 authService와 memberService 사용
     private final AuthService authService;
-
+    private final MemberService memberService;
 
     // 회원 가입
     @PostMapping("/sign")
@@ -39,6 +39,19 @@ public class MemberContoroller {
     @GetMapping("/kakao/login")
     public ResponseEntity<TokenDto> kakaoLogin(@RequestParam String email) {
         return ResponseEntity.ok(authService.kakaoLogin(email));
+    }
+
+    // 회원 리프레쉬 토큰 조회
+    @GetMapping("/getRefresh")
+    private ResponseEntity<String> getRefreshToken(@RequestParam String accessToken) {
+        return ResponseEntity.ok(authService.returnRefreshToken(accessToken));
+    }
+
+    // accessToken 재발급
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshToken(@RequestBody String refreshToken) {
+        log.info("refreshToken: {}", refreshToken);
+        return ResponseEntity.ok(authService.createAccessToken(refreshToken));
     }
 
 

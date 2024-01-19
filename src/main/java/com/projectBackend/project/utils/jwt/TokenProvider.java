@@ -30,8 +30,6 @@ public class TokenProvider {
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60; // 임시 1시간
     private final Key key; // 토큰을 서명(signiture)하기 위한 Key
 
-
-
     public TokenProvider(@Value("${jwt.secret}") String secretKey) {
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512); // HS512 알고리즘을 사용하는 키 생성
     }
@@ -39,7 +37,7 @@ public class TokenProvider {
     // 토큰 생성
     public TokenDto generateTokenDto(String authoruty , Authentication authentication) {
         if (authoruty.equals("ROLE_USER")) {
-            log.warn("authentication {} : ", authentication);
+            log.warn("authentication : {} ", authentication);
             // 권한 정보 문자열 생성,
             String authorities = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
@@ -74,6 +72,7 @@ public class TokenProvider {
                     .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                     .refreshToken(refreshToken)
                     .refreshTokenExpiresIn(refreshTokenExpiresIn.getTime())
+                    .role("ROLE_USER")
                     .build();
         } else if (authoruty.equals("ROLE_ADMIN")) {
             log.warn("authentication {} : ", authentication);
@@ -111,6 +110,7 @@ public class TokenProvider {
                     .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                     .refreshToken(refreshToken)
                     .refreshTokenExpiresIn(refreshTokenExpiresIn.getTime())
+                    .role("ROLE_ADMIN")
                     .build();
         }
         else {
@@ -164,7 +164,7 @@ public class TokenProvider {
         }
         return false;
     }
-    
+
     // refresh 토큰의 유효성 검사
     public boolean validateRefreshToken(String refreshToken) {
         try {
