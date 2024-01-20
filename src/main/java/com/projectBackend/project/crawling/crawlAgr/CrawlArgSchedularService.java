@@ -3,6 +3,7 @@ package com.projectBackend.project.crawling.crawlAgr;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.projectBackend.project.utils.Common;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class CrawlArgSchedularService {
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void performCrawling() throws JsonProcessingException {
         // Flask 애플리케이션의 stockTop 엔드포인트에 POST 요청 보내기
-        String url = "http://localhost:5000/python/arg";
+        String url = Common.python + "/arg";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String stockData = response.getBody();
 

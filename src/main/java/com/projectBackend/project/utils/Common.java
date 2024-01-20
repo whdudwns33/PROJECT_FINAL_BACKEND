@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Common {
     // 파이썬 url
-    public static String python = "http://localhost:5000";
+    public static String python = "http://localhost:5000/python";
+    // 엘라스틱
+    public static String elastic = "localhost:9200";
 
 
     // 카카오 토큰 발급을 요청하는 url
