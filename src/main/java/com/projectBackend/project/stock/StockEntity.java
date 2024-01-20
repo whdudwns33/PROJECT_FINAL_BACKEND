@@ -1,9 +1,6 @@
 package com.projectBackend.project.stock;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 @Entity
@@ -12,10 +9,12 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Builder
-// dataStock
+//@NoArgsConstructor
+@AllArgsConstructor
 public class StockEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(nullable = false)
     private Long stockId;
     private String stockOpen;
     private String stockHigh;
@@ -33,4 +32,9 @@ public class StockEntity {
     private String stockEps;
     private String stockDiv;
     private String stockDps;
+
+    // 기본 생성자
+    public StockEntity() {
+    }
 }
+

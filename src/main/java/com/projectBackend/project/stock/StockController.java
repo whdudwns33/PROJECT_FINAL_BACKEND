@@ -12,11 +12,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StockController {
     private final StockService stockService;
+    private final StockJdbcBulkInsert stockJdbcBulkInsert;
     @PostMapping("/data")
     public ResponseEntity<String> loadStock(@RequestBody List<StockDto> stockDtoList) {
-        List<StockEntity> stockEntityList = stockService.convertToEntities(stockDtoList);
-        stockService.saveStocks(stockEntityList);
+        stockJdbcBulkInsert.bulkInsert(stockDtoList);
         log.info("Stock Data received successfully");
         return ResponseEntity.ok("Stock Data received successfully");
+    }
+
+    @GetMapping("/get/{stockName}")
+    public ResponseEntity<List<StockEntity>> getStockByName(@PathVariable String stockName) {
+        List<StockEntity> stocks = stockService.getStockByName(stockName);
+
+        if (stocks.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(stocks);
+        }
     }
 }
