@@ -1,5 +1,6 @@
 package com.projectBackend.project.stock;
 
+import com.projectBackend.project.stock.elastic.StockElasticService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,17 @@ import java.util.List;
 public class StockController {
     private final StockService stockService;
     private final StockJdbcBulkInsert stockJdbcBulkInsert;
+    private final StockElasticService stockElasticService;
     @PostMapping("/data")
     public ResponseEntity<String> loadStock(@RequestBody List<StockDto> stockDtoList) {
+        // elasticSearch에 저장 코드 추가
+        log.info("Stock Data Elastic go");
+        stockElasticService.saveStocksToElasticsearch(stockDtoList);
+
+        log.info("Stock Data bulkInsert go");
         stockJdbcBulkInsert.bulkInsert(stockDtoList);
+
+
         log.info("Stock Data received successfully");
         return ResponseEntity.ok("Stock Data received successfully");
     }
