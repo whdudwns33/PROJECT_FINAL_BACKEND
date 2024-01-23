@@ -20,10 +20,10 @@ import java.util.Random;
 @RequiredArgsConstructor
 @Transactional
 public class MailService {
-    public static String EPW;
-    private final MemberRepository memberRepository;
     @Autowired
     JavaMailSender emailsender;
+    public static String EPW;
+    private final MemberRepository memberRepository;
     private String ePw; // 인증번호
 
     // 메일 내용 작성
