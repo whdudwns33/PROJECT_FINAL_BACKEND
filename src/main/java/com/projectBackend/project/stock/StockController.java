@@ -1,6 +1,9 @@
 package com.projectBackend.project.stock;
 
 import com.projectBackend.project.stock.elastic.StockElasticService;
+import com.projectBackend.project.stock.jdbc.StockJdbcBulkInsert;
+import com.projectBackend.project.stock.jpa.StockEntity;
+import com.projectBackend.project.stock.jpa.StockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

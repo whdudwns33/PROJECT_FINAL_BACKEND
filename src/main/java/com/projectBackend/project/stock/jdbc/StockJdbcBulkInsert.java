@@ -1,7 +1,8 @@
-package com.projectBackend.project.stock;
+package com.projectBackend.project.stock.jdbc;
 
 
 
+import com.projectBackend.project.stock.StockDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -63,13 +64,6 @@ public class StockJdbcBulkInsert {
 
                 int[] affectedRows = preparedStatement.executeBatch();
                 connection.commit();  // 트랜잭션 커밋
-
-//                for (int rows : affectedRows) {
-//                    if (rows <= 0) {
-//                        // 실패한 경우에 대한 처리
-//                        System.out.println("Failed to insert some rows.");
-//                    }
-//                }
 
             } catch (SQLException e) {
                 connection.rollback();  // 트랜잭션 롤백

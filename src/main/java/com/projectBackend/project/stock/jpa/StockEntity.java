@@ -1,4 +1,4 @@
-package com.projectBackend.project.stock;
+package com.projectBackend.project.stock.jpa;
 
 import lombok.*;
 
