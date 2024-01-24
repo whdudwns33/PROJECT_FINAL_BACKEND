@@ -9,13 +9,17 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Builder
-//@NoArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 public class StockEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(nullable = false)
     private Long stockId;
+
+//    // batch Update를 위해 필요?
+//    private String yearMonth;
+    private String stockDate;
+    private String stockCode;
     private String stockOpen;
     private String stockHigh;
     private String stockLow;
@@ -23,8 +27,6 @@ public class StockEntity {
     private String stockVolume;
     private String stockTradingValue;
     private String stockFluctuationRate;
-    private String stockDate;
-    private String stockCode;
     private String stockName;
     private String stockBps;
     private String stockPer;
@@ -33,8 +35,5 @@ public class StockEntity {
     private String stockDiv;
     private String stockDps;
 
-    // 기본 생성자
-    public StockEntity() {
-    }
 }
 
