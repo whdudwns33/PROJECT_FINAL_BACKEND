@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.Random;
 
+import static com.projectBackend.project.utils.Common.api;
+import static com.projectBackend.project.utils.Common.secretApi;
+
 @Setter
 @Getter
 @ToString
@@ -27,10 +30,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class SmsConfig {
     private final DefaultMessageService messageService;
-    private String api = "NCSX0MYODTVI4R8T";
-    private String secretApi = "U35KK751OXT6FH57ZHJZLNAQITFEMUUX";
     public String authNum;
-
 
     @Autowired
     public SmsConfig() {

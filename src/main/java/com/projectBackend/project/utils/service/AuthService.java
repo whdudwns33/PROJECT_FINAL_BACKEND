@@ -64,6 +64,7 @@ public class AuthService {
                 if ("ROLE_USER".equals(authority) || "ROLE_ADMIN".equals(authority)) {
                     TokenDto tokenDto = tokenProvider.generateTokenDto(authority, authentication);
                     String refreshToken = tokenDto.getRefreshToken();
+                    tokenDto.setRole(authority);
 
                     // 토큰 저장
                     TokenEntity token = new TokenEntity();

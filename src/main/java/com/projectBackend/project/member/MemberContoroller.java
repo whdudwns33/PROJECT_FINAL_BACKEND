@@ -59,7 +59,7 @@ public class MemberContoroller {
     }
 
     // 회원 가입 시 이메일 인증 + 중복 체크
-    @PostMapping("/mailConfirm")
+    @GetMapping("/mailConfirm")
     public ResponseEntity<Boolean> mailConfirm(@RequestParam String email) throws Exception {
         boolean isTrue = mailService.sendSimpleMessage(email);
         return ResponseEntity.ok(isTrue);
