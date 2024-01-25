@@ -14,28 +14,29 @@ public class CrawlEnergyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String CrawlEnergyName;
-    private String CrawlEnergyMonth;
-    private String CrawlEnergyUnits;
-    private String CrawlEnergyPrice;
-    private String CrawlEnergyYesterday;
-    private String CrawlEnergyRate;
-    private String CrawlEnergyDate;
-    private String CrawlEnergyExchange;
+
+    private String crawlEnergyName;
+    private String crawlEnergyMonth;
+    private String crawlEnergyUnits;
+    private String crawlEnergyPrice;
+//    private String crawlEnergyYesterday;
+    private String crawlEnergyRate;
+    private String crawlEnergyDate;
+    private String crawlEnergyExchange;
 
     @Builder
-    public CrawlEnergyEntity(Long id, String CrawlEnergyName, String CrawlEnergyMonth,
-                             String CrawlEnergyUnits, String CrawlEnergyPrice,
-                             String CrawlEnergyYesterday, String CrawlEnergyRate,
-                             String CrawlEnergyDate, String CrawlEnergyExchange) {
+    public CrawlEnergyEntity(Long id, String crawlEnergyName, String crawlEnergyMonth,
+                             String crawlEnergyUnits, String crawlEnergyPrice,
+                             String crawlEnergyYesterday, String crawlEnergyRate,
+                             String crawlEnergyDate, String crawlEnergyExchange) {
         this.id = id;
-        this.CrawlEnergyName = CrawlEnergyName;
-        this.CrawlEnergyMonth = CrawlEnergyMonth;
-        this.CrawlEnergyUnits = CrawlEnergyUnits;
-        this.CrawlEnergyPrice = CrawlEnergyPrice;
-        this.CrawlEnergyYesterday = CrawlEnergyYesterday;
-        this.CrawlEnergyRate = CrawlEnergyRate;
-        this.CrawlEnergyDate = CrawlEnergyDate;
-        this.CrawlEnergyExchange = CrawlEnergyExchange;
+        this.crawlEnergyName = crawlEnergyName;
+        this.crawlEnergyMonth = crawlEnergyMonth;
+        this.crawlEnergyUnits = crawlEnergyUnits;
+        this.crawlEnergyPrice = crawlEnergyPrice;
+//        this.crawlEnergyYesterday = crawlEnergyYesterday;
+        this.crawlEnergyRate = crawlEnergyRate;
+        this.crawlEnergyDate = crawlEnergyDate;
+        this.crawlEnergyExchange = crawlEnergyExchange;
     }
 }

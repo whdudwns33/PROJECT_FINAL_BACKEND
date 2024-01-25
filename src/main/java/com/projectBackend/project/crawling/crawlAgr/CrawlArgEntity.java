@@ -14,24 +14,25 @@ public class CrawlArgEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String CrawlExchangeName;
-    private String CrawlExchangeMonth;
-    private String CrawlExchangeUnits;
-    private String CrawlExchangePrice;
-    private String CrawlExchangeYesterday;
-    private String CrawlExchangeRate;
-    private String CrawlExchangeDate;
-    private String CrawlExchangeExchange;
+
+    private String crawlExchangeName;
+    private String crawlExchangeMonth;
+    private String crawlExchangeUnits;
+    private String crawlExchangePrice;
+    private String crawlExchangeYesterday;
+    private String crawlExchangeRate;
+    private String crawlExchangeDate;
+    private String crawlExchangeExchange;
 
     @Builder
-    public CrawlArgEntity(String CrawlExchangeName, String CrawlExchangeMonth, String CrawlExchangeUnits, String CrawlExchangePrice, String CrawlExchangeYesterday , String CrawlExchangeRate, String CrawlExchangeDate, String CrawlExchangeExchange) {
-        this.CrawlExchangeName = CrawlExchangeName;
-        this.CrawlExchangeMonth = CrawlExchangeMonth;
-        this.CrawlExchangeUnits = CrawlExchangeUnits;
-        this.CrawlExchangePrice = CrawlExchangePrice;
-        this.CrawlExchangeYesterday = CrawlExchangeYesterday;
-        this.CrawlExchangeRate = CrawlExchangeRate;
-        this.CrawlExchangeDate = CrawlExchangeDate;
-        this.CrawlExchangeExchange = CrawlExchangeExchange;
+    public CrawlArgEntity(String crawlExchangeName, String crawlExchangeMonth, String crawlExchangeUnits, String crawlExchangePrice, String crawlExchangeYesterday, String crawlExchangeRate, String crawlExchangeDate, String crawlExchangeExchange) {
+        this.crawlExchangeName = crawlExchangeName;
+        this.crawlExchangeMonth = crawlExchangeMonth;
+        this.crawlExchangeUnits = crawlExchangeUnits;
+        this.crawlExchangePrice = crawlExchangePrice;
+        this.crawlExchangeYesterday = crawlExchangeYesterday;
+        this.crawlExchangeRate = crawlExchangeRate;
+        this.crawlExchangeDate = crawlExchangeDate;
+        this.crawlExchangeExchange = crawlExchangeExchange;
     }
 }

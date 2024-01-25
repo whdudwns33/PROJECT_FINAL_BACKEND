@@ -15,23 +15,23 @@ public class CrawlGoldEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String CrawlGoldname;
-    private String CrawlGoldunit;
-    private String CrawlGoldprice;
-    private String CrawlGoldyesterday;
-    private String CrawlGoldrate;
-    private String CrawlGolddate;
+    private String crawlGoldName;
+    private String crawlGoldUnit;
+    private String crawlGoldPrice;
+    private String crawlGoldYesterday;
+    private String crawlGoldRate;
+    private String crawlGoldDate;
 
     @Builder
-    public CrawlGoldEntity(Long id, String CrawlGoldname, String CrawlGoldunit,
-                           String CrawlGoldprice, String CrawlGoldyesterday,
-                           String CrawlGoldrate, String CrawlGolddate) {
+    public CrawlGoldEntity(Long id, String crawlGoldName, String crawlGoldUnit,
+                           String crawlGoldPrice, String crawlGoldYesterday,
+                           String crawlGoldRate, String crawlGoldDate) {
         this.id = id;
-        this.CrawlGoldname = CrawlGoldname;
-        this.CrawlGoldunit = CrawlGoldunit;
-        this.CrawlGoldprice = CrawlGoldprice;
-        this.CrawlGoldyesterday = CrawlGoldyesterday;
-        this.CrawlGoldrate = CrawlGoldrate;
-        this.CrawlGolddate = CrawlGolddate;
+        this.crawlGoldName = crawlGoldName;
+        this.crawlGoldUnit = crawlGoldUnit;
+        this.crawlGoldPrice = crawlGoldPrice;
+        this.crawlGoldYesterday = crawlGoldYesterday;
+        this.crawlGoldRate = crawlGoldRate;
+        this.crawlGoldDate = crawlGoldDate;
     }
 }

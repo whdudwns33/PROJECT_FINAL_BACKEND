@@ -36,10 +36,10 @@ public class CrawlStockSchedularService {
         crawlStockRpository.deleteAll();        
         for( CrawlStockDto crawlStockDto : stockDtoList) {
             CrawlStockEntity crawlStockEntity = CrawlStockEntity.builder()
-                    .StockName(crawlStockDto.getName())
-                    .StockPrice(crawlStockDto.getPrice())
-                    .StockUpDown(crawlStockDto.getUpDown())
-                    .StockRate(crawlStockDto.getRate())
+                    .stockName(crawlStockDto.getName())
+                    .stockPrice(crawlStockDto.getPrice())
+                    .stockUpDown(crawlStockDto.getUpDown())
+                    .stockRate(crawlStockDto.getRate())
                     .build();
             crawlStockRpository.save(crawlStockEntity);
         }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,25 +29,40 @@ public class CrawlExchangeSchedularService {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String data = response.getBody();
 
-        //assert 문은 주어진 조건이 참이면 계속 진행하고, 거짓이라면 AssertionError를 발생시켜 프로그램을 중단
-        assert data != null;
-        List<CrawlExchangeDto> dataDtoList = objectMapper.readValue(data, new TypeReference<List<CrawlExchangeDto>>() {});
-        // 데이터 최신화를 위해 삭제
-        crawlExchangeRepository.deleteAll();
-        for (CrawlExchangeDto exchangeDto : dataDtoList) {
-            CrawlExchangeEntity crawlExchangeEntity = CrawlExchangeEntity.builder()
-                    .CrawlExchangeName(exchangeDto.getName())
-                    .CrawlExchangeTbRate(exchangeDto.getTbRate())
-                    .CrawlExchangeBuy(exchangeDto.getBuy())
-                    .CrawlExchangeSell(exchangeDto.getSell())
-                    .CrawlExchangeSend(exchangeDto.getSend())
-                    .CrawlExchangeReceive(exchangeDto.getReceive())
-                    .CrawlExchangeExchange(exchangeDto.getExchange())
-                    .build();
+        if (data != null) {
+            List<CrawlExchangeDto> dataDtoList = objectMapper.readValue(data, new TypeReference<List<CrawlExchangeDto>>() {
+            });
+            // 데이터 최신화를 위해 삭제
+            crawlExchangeRepository.deleteAll();
+            for (CrawlExchangeDto exchangeDto : dataDtoList) {
+                Optional<CrawlExchangeEntity> existingEntityOptional = crawlExchangeRepository.findByCrawlExchangeName(exchangeDto.getName());
+                if (existingEntityOptional.isPresent()) {
+                    CrawlExchangeEntity crawlExchangeEntity = existingEntityOptional.get();
+                    crawlExchangeEntity.setCrawlExchangeExchange(exchangeDto.getExchange());
+                    crawlExchangeEntity.setCrawlExchangeName(exchangeDto.getName());
+                    crawlExchangeEntity.setCrawlExchangeBuy(exchangeDto.getBuy());
+                    crawlExchangeEntity.setCrawlExchangeReceive(exchangeDto.getReceive());
+                    crawlExchangeEntity.setCrawlExchangeSell(exchangeDto.getSell());
+                    crawlExchangeEntity.setCrawlExchangeSend(exchangeDto.getSend());
+                    crawlExchangeEntity.setCrawlExchangeTbRate(exchangeDto.getTbRate());
+                    crawlExchangeEntity.setCrawlExchangeTbRate(exchangeDto.getTbRate());
+                }
+                else {
+                    CrawlExchangeEntity crawlExchangeEntity = CrawlExchangeEntity.builder()
+                            .crawlExchangeName(exchangeDto.getName())
+                            .crawlExchangeTbRate(exchangeDto.getTbRate())
+                            .crawlExchangeBuy(exchangeDto.getBuy())
+                            .crawlExchangeSell(exchangeDto.getSell())
+                            .crawlExchangeSend(exchangeDto.getSend())
+                            .crawlExchangeReceive(exchangeDto.getReceive())
+                            .crawlExchangeExchange(exchangeDto.getExchange())
+                            .crawlExchangeTbRate(exchangeDto.getTbRate())
+                            .build();
 
-            crawlExchangeRepository.save(crawlExchangeEntity);
+                    crawlExchangeRepository.save(crawlExchangeEntity);
+                }
+            }
         }
     }
-
 
 }

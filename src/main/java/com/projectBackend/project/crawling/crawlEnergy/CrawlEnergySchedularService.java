@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -30,25 +31,41 @@ public class CrawlEnergySchedularService {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String data = response.getBody();
 
-        //assert 문은 주어진 조건이 참이면 계속 진행하고, 거짓이라면 AssertionError를 발생시켜 프로그램을 중단
-        assert data != null;
-        List<CrawlEnergyDto> dataDtoList = objectMapper.readValue(data, new TypeReference<List<CrawlEnergyDto>>() {});
-        // 데이터 최신화를 위해 삭제
-        crawlEnergyRepository.deleteAll();
-        for (CrawlEnergyDto energyDto : dataDtoList) {
-            CrawlEnergyEntity crawlEnergyEntity = CrawlEnergyEntity.builder()
-                    .CrawlEnergyName(energyDto.getName())
-                    .CrawlEnergyMonth(energyDto.getMonth()) // 예시로 Long으로 변환하였습니다. 필요에 따라 다른 형식으로 변환해주세요.
-                    .CrawlEnergyUnits(energyDto.getUnits()) // 마찬가지로 필요에 따라 변환
-                    .CrawlEnergyPrice(energyDto.getPrice()) // 필요에 따라 변환
-                    .CrawlEnergyYesterday(energyDto.getYesterday()) // 필요에 따라 변환
-                    .CrawlEnergyRate(energyDto.getRate()) // 필요에 따라 변환
-                    .CrawlEnergyDate(energyDto.getDate()) // 필요에 따라 변환
-                    .CrawlEnergyExchange(energyDto.getExchange())
-                    .build();
+        if (data != null) {
+            List<CrawlEnergyDto> dataDtoList = objectMapper.readValue(data, new TypeReference<List<CrawlEnergyDto>>() {
+            });
 
-            crawlEnergyRepository.save(crawlEnergyEntity);
+            for (CrawlEnergyDto energyDto : dataDtoList) {
+                // 해당 이름으로 데이터 존재하면 업데이트, 없으면 추가
+                Optional<CrawlEnergyEntity> existingEntityOptional = crawlEnergyRepository.findByCrawlEnergyName(energyDto.getName());
+                if (existingEntityOptional.isPresent()) {
+                    CrawlEnergyEntity existingEntity = existingEntityOptional.get();
+                    existingEntity.setCrawlEnergyDate(energyDto.getDate());
+                    existingEntity.setCrawlEnergyExchange(energyDto.getExchange());
+                    existingEntity.setCrawlEnergyMonth(energyDto.getMonth());
+//                    existingEntity.setCrawlEnergyYesterday(energyDto.getYesterday());
+                    existingEntity.setCrawlEnergyName(energyDto.getName());
+                    existingEntity.setCrawlEnergyUnits(energyDto.getUnits());
+                    existingEntity.setCrawlEnergyRate(energyDto.getRate());
+                    existingEntity.setCrawlEnergyPrice(energyDto.getPrice());
+
+                    crawlEnergyRepository.saveAndFlush(existingEntity);
+                }
+                else {
+                    CrawlEnergyEntity crawlEnergyEntity = CrawlEnergyEntity.builder()
+                            .crawlEnergyName(energyDto.getName())
+                            .crawlEnergyMonth(energyDto.getMonth()) // 예시로 Long으로 변환하였습니다. 필요에 따라 다른 형식으로 변환해주세요.
+                            .crawlEnergyUnits(energyDto.getUnits()) // 마찬가지로 필요에 따라 변환
+                            .crawlEnergyPrice(energyDto.getPrice()) // 필요에 따라 변환
+//                            .crawlEnergyYesterday(energyDto.getYesterday()) // 필요에 따라 변환
+                            .crawlEnergyRate(energyDto.getRate()) // 필요에 따라 변환
+                            .crawlEnergyDate(energyDto.getDate()) // 필요에 따라 변환
+                            .crawlEnergyExchange(energyDto.getExchange())
+                            .build();
+
+                    crawlEnergyRepository.save(crawlEnergyEntity);
+                }
+            }
         }
     }
-
 }

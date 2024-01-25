@@ -14,25 +14,26 @@ public class CrawlExchangeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String CrawlExchangeName;
-    private String CrawlExchangeTbRate;
-    private String CrawlExchangeBuy;
-    private String CrawlExchangeSell;
-    private String CrawlExchangeSend;
-    private String CrawlExchangeReceive;
-    private String CrawlExchangeExchange;
+
+    private String crawlExchangeName;
+    private String crawlExchangeTbRate;
+    private String crawlExchangeBuy;
+    private String crawlExchangeSell;
+    private String crawlExchangeSend;
+    private String crawlExchangeReceive;
+    private String crawlExchangeExchange;
 
     @Builder
-    public CrawlExchangeEntity(Long id, String CrawlExchangeName, String CrawlExchangeTbRate,
-                               String CrawlExchangeBuy, String CrawlExchangeSell, String CrawlExchangeSend,
-                               String CrawlExchangeReceive, String CrawlExchangeExchange) {
+    public CrawlExchangeEntity(Long id, String crawlExchangeName, String crawlExchangeTbRate,
+                               String crawlExchangeBuy, String crawlExchangeSell, String crawlExchangeSend,
+                               String crawlExchangeReceive, String crawlExchangeExchange) {
         this.id = id;
-        this.CrawlExchangeName = CrawlExchangeName;
-        this.CrawlExchangeTbRate = CrawlExchangeTbRate;
-        this.CrawlExchangeBuy = CrawlExchangeBuy;
-        this.CrawlExchangeSell = CrawlExchangeSell;
-        this.CrawlExchangeSend = CrawlExchangeSend;
-        this.CrawlExchangeReceive = CrawlExchangeReceive;
-        this.CrawlExchangeExchange = CrawlExchangeExchange;
+        this.crawlExchangeName = crawlExchangeName;
+        this.crawlExchangeTbRate = crawlExchangeTbRate;
+        this.crawlExchangeBuy = crawlExchangeBuy;
+        this.crawlExchangeSell = crawlExchangeSell;
+        this.crawlExchangeSend = crawlExchangeSend;
+        this.crawlExchangeReceive = crawlExchangeReceive;
+        this.crawlExchangeExchange = crawlExchangeExchange;
     }
 }

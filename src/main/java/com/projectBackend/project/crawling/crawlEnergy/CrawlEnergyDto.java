@@ -10,7 +10,7 @@ public class CrawlEnergyDto {
     private String month;
     private String units;
     private String price;
-    private String yesterday;
+//    private String yesterday;
     private String rate;
     private String date;
     private String exchange;

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,23 +28,38 @@ public class CrawlOilSchedularService {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String data = response.getBody();
 
-        //assert 문은 주어진 조건이 참이면 계속 진행하고, 거짓이라면 AssertionError를 발생시켜 프로그램을 중단
-        assert data != null;
-        List<CrawlOilDto> dataDtoList = objectMapper.readValue(data, new TypeReference<List<CrawlOilDto>>() {});
+        if (data != null) {
+            List<CrawlOilDto> oilDtoList = objectMapper.readValue(data, new TypeReference<List<CrawlOilDto>>() {});
 
-        // 데이터 최신화를 위해 삭제
-        crawlOilRepository.deleteAll();
+            // 데이터 최신화를 위해 삭제
+            crawlOilRepository.deleteAll();
 
-        for (CrawlOilDto oilDto : dataDtoList) {
-            CrawlOilEntity crawlOilEntity = CrawlOilEntity.builder()
-                    .crawlOilName(oilDto.getName())
-                    .crawlOilUnit(oilDto.getUnit())
-                    .crawlOilPrice(oilDto.getPrice())
-                    .crawlOilYesterday(oilDto.getYesterday())
-                    .crawlOilRate(oilDto.getRate())
-                    .build();
+            for (CrawlOilDto oilDto : oilDtoList) {
+                // 이름으로 기존 데이터 조회
+                Optional<CrawlOilEntity> existingEntityOptional = crawlOilRepository.findByCrawlOilName(oilDto.getName());
 
-            crawlOilRepository.save(crawlOilEntity);
+                if (existingEntityOptional.isPresent()) {
+                    // 기존 데이터가 있으면 업데이트
+                    CrawlOilEntity crawlOilEntity = existingEntityOptional.get();
+                    crawlOilEntity.setCrawlOilUnit(oilDto.getUnit());
+                    crawlOilEntity.setCrawlOilPrice(oilDto.getPrice());
+                    crawlOilEntity.setCrawlOilYesterday(oilDto.getYesterday());
+                    crawlOilEntity.setCrawlOilRate(oilDto.getRate());
+
+                    crawlOilRepository.save(crawlOilEntity);
+                } else {
+                    // 기존 데이터가 없으면 새로 추가
+                    CrawlOilEntity crawlOilEntity = CrawlOilEntity.builder()
+                            .crawlOilName(oilDto.getName())
+                            .crawlOilUnit(oilDto.getUnit())
+                            .crawlOilPrice(oilDto.getPrice())
+                            .crawlOilYesterday(oilDto.getYesterday())
+                            .crawlOilRate(oilDto.getRate())
+                            .build();
+
+                    crawlOilRepository.save(crawlOilEntity);
+                }
+            }
         }
     }
 }

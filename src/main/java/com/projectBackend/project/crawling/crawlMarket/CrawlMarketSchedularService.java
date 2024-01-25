@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -18,29 +19,44 @@ import java.util.List;
 public class CrawlMarketSchedularService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final CrawlMarketRepository crawlExchangeRepository;
-    
+    private final CrawlMarketRepository crawlMarketRepository;
+
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void performCrawling() throws JsonProcessingException {
-        // Flask 애플리케이션의 stockTop 엔드포인트에 POST 요청 보내기
+        // Flask 애플리케이션의 exchangeMarket 엔드포인트에 POST 요청 보내기
         String url = "http://localhost:5000/python/exchangeMarket";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        String stockData = response.getBody();
+        String marketData = response.getBody();
 
-        //assert 문은 주어진 조건이 참이면 계속 진행하고, 거짓이라면 AssertionError를 발생시켜 프로그램을 중단
-        assert stockData != null;
-        List<CrawlMarketDto> stockDtoList = objectMapper.readValue(stockData, new TypeReference<List<CrawlMarketDto>>() {});
-        // 데이터 최신화를 위해 삭제
-        crawlExchangeRepository.deleteAll();
-        for( CrawlMarketDto crawlMarketDto : stockDtoList) {
-            CrawlMarketEntity crawlStockEntity = CrawlMarketEntity.builder()
-                    .CrawlMarketSymbol(crawlMarketDto.getSymbol())
-                    .CrawlMarketRate(crawlMarketDto.getRate())
-                    .CrawlMarketBefore(crawlMarketDto.getBefore())
-                    .CrawlMarketCurrent(crawlMarketDto.getCurrent())
-                    .CrawlMarketName(crawlMarketDto.getName())
-                    .build();
-            crawlExchangeRepository.save(crawlStockEntity);
+        if (marketData != null) {
+            List<CrawlMarketDto> marketDtoList = objectMapper.readValue(marketData, new TypeReference<List<CrawlMarketDto>>() {});
+
+            for (CrawlMarketDto crawlMarketDto : marketDtoList) {
+                // Symbol로 기존 데이터 조회
+                Optional<CrawlMarketEntity> existingEntityOptional = crawlMarketRepository.findByCrawlMarketSymbol(crawlMarketDto.getSymbol());
+
+                if (existingEntityOptional.isPresent()) {
+                    // 기존 데이터가 있으면 업데이트
+                    CrawlMarketEntity crawlMarketEntity = existingEntityOptional.get();
+                    crawlMarketEntity.setCrawlMarketRate(crawlMarketDto.getRate());
+                    crawlMarketEntity.setCrawlMarketBefore(crawlMarketDto.getBefore());
+                    crawlMarketEntity.setCrawlMarketCurrent(crawlMarketDto.getCurrent());
+                    crawlMarketEntity.setCrawlMarketName(crawlMarketDto.getName());
+
+                    crawlMarketRepository.save(crawlMarketEntity);
+                } else {
+                    // 기존 데이터가 없으면 새로 추가
+                    CrawlMarketEntity crawlMarketEntity = CrawlMarketEntity.builder()
+                            .crawlMarketSymbol(crawlMarketDto.getSymbol())
+                            .crawlMarketRate(crawlMarketDto.getRate())
+                            .crawlMarketBefore(crawlMarketDto.getBefore())
+                            .crawlMarketCurrent(crawlMarketDto.getCurrent())
+                            .crawlMarketName(crawlMarketDto.getName())
+                            .build();
+
+                    crawlMarketRepository.save(crawlMarketEntity);
+                }
+            }
         }
     }
 }

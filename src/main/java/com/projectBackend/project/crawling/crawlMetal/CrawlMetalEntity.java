@@ -1,6 +1,5 @@
 package com.projectBackend.project.crawling.crawlMetal;
 
-
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,13 +15,13 @@ public class CrawlMetalEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String CrawlMetalName;
-    private String CrawlMetalUnits;
-    private String CrawlMetalPrice;
-    private String CrawlMetalYesterday;
-    private String CrawlMetalRate;
-    private String CrawlMetalDate;
-    private String CrawlMetalExchange;
+    private String crawlMetalName;
+    private String crawlMetalUnits;
+    private String crawlMetalPrice;
+    private String crawlMetalYesterday;
+    private String crawlMetalRate;
+    private String crawlMetalDate;
+    private String crawlMetalExchange;
 
     @Builder
     public CrawlMetalEntity(Long id, String crawlMetalName,
@@ -30,12 +29,12 @@ public class CrawlMetalEntity {
                             String crawlMetalYesterday, String crawlMetalRate,
                             String crawlMetalDate, String crawlMetalExchange) {
         this.id = id;
-        this.CrawlMetalName = crawlMetalName;
-        this.CrawlMetalUnits = crawlMetalUnits;
-        this.CrawlMetalPrice = crawlMetalPrice;
-        this.CrawlMetalYesterday = crawlMetalYesterday;
-        this.CrawlMetalRate = crawlMetalRate;
-        this.CrawlMetalDate = crawlMetalDate;
-        this.CrawlMetalExchange = crawlMetalExchange;
+        this.crawlMetalName = crawlMetalName;
+        this.crawlMetalUnits = crawlMetalUnits;
+        this.crawlMetalPrice = crawlMetalPrice;
+        this.crawlMetalYesterday = crawlMetalYesterday;
+        this.crawlMetalRate = crawlMetalRate;
+        this.crawlMetalDate = crawlMetalDate;
+        this.crawlMetalExchange = crawlMetalExchange;
     }
 }

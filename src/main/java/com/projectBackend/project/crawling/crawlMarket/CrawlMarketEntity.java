@@ -14,18 +14,18 @@ public class CrawlMarketEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String CrawlMarketName;
-    private String CrawlMarketSymbol;
-    private String CrawlMarketCurrent;
-    private String CrawlMarketBefore;
-    private String CrawlMarketRate;
+    private String crawlMarketName;
+    private String crawlMarketSymbol;
+    private String crawlMarketCurrent;
+    private String crawlMarketBefore;
+    private String crawlMarketRate;
 
     @Builder
-    public CrawlMarketEntity(String CrawlMarketName, String CrawlMarketSymbol, String CrawlMarketCurrent, String CrawlMarketBefore, String CrawlMarketRate) {
-        this.CrawlMarketName = CrawlMarketName;
-        this.CrawlMarketSymbol = CrawlMarketSymbol;
-        this.CrawlMarketCurrent = CrawlMarketCurrent;
-        this.CrawlMarketBefore = CrawlMarketBefore;
-        this.CrawlMarketRate = CrawlMarketRate;
+    public CrawlMarketEntity(String crawlMarketName, String crawlMarketSymbol, String crawlMarketCurrent, String crawlMarketBefore, String crawlMarketRate) {
+        this.crawlMarketName = crawlMarketName;
+        this.crawlMarketSymbol = crawlMarketSymbol;
+        this.crawlMarketCurrent = crawlMarketCurrent;
+        this.crawlMarketBefore = crawlMarketBefore;
+        this.crawlMarketRate = crawlMarketRate;
     }
 }

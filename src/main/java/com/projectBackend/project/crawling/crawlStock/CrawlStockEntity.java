@@ -1,6 +1,5 @@
 package com.projectBackend.project.crawling.crawlStock;
 
-
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,16 +14,17 @@ public class CrawlStockEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String StockName;
-    private String StockPrice;
-    private String StockUpDown;
-    private String StockRate;
+
+    private String stockName;
+    private String stockPrice;
+    private String stockUpDown;
+    private String stockRate;
 
     @Builder
-    public CrawlStockEntity(String StockName,String StockPrice,String StockUpDown,String StockRate ) {
-        this.StockName = StockName;
-        this.StockPrice = StockPrice;
-        this.StockUpDown = StockUpDown;
-        this.StockRate = StockRate;
+    public CrawlStockEntity(String stockName, String stockPrice, String stockUpDown, String stockRate) {
+        this.stockName = stockName;
+        this.stockPrice = stockPrice;
+        this.stockUpDown = stockUpDown;
+        this.stockRate = stockRate;
     }
 }
