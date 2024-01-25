@@ -18,7 +18,7 @@ import java.util.List;
 public class CrawlDomesticIndicatorsSchedularService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final CrawlDomesticIndicatorsRepository crawlGoldRepository;
+    private final CrawlDomesticIndicatorsRepository crawlDomesticIndicatorsRepository;
 
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void performCrawling() throws JsonProcessingException {
@@ -32,7 +32,7 @@ public class CrawlDomesticIndicatorsSchedularService {
         List<CrawlDomesticIndicatorsDto> dataDtoList = objectMapper.readValue(data, new TypeReference<List<CrawlDomesticIndicatorsDto>>() {});
 
         // 데이터 최신화를 위해 삭제
-        crawlGoldRepository.deleteAll();
+        crawlDomesticIndicatorsRepository.deleteAll();
 
         for (CrawlDomesticIndicatorsDto domesticIndicatorsDtoDto : dataDtoList) {
             CrawlDomesticIndicatorsEntity crawlDomesticIndicatorsEntity = CrawlDomesticIndicatorsEntity.builder()
@@ -41,7 +41,7 @@ public class CrawlDomesticIndicatorsSchedularService {
                     .CrawlDomesticIndicatorsChange(domesticIndicatorsDtoDto.getChangepoint())
                     .build();
 
-            crawlGoldRepository.save(crawlDomesticIndicatorsEntity);
+            crawlDomesticIndicatorsRepository.save(crawlDomesticIndicatorsEntity);
         }
     }
 }

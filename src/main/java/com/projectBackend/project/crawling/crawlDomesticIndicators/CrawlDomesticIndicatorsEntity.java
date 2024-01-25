@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Getter
 @ToString
 @Entity
-@Table(name = "crawlGold")
+@Table(name = "crawlDomesticIndicators")
 @NoArgsConstructor
 public class CrawlDomesticIndicatorsEntity {
     @Id
