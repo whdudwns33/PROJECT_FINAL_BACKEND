@@ -12,8 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Setter
 @Builder
 public class NewsDto {
+    private String id;
     private String title;
-    private String originallink;
+    private String originalLink;
     private String link;
     private String description;
     private String pubDate;
@@ -21,7 +22,7 @@ public class NewsDto {
     public static NewsDto of(NewsEntity news) {
         return NewsDto.builder()
                 .title(news.getTitle())
-                .originallink(news.getOriginallink())
+                .originalLink(news.getOriginalLink())
                 .link(news.getLink())
                 .description(news.getDescription())
                 .pubDate(news.getPubDate())
@@ -30,8 +31,9 @@ public class NewsDto {
 
     public NewsEntity toEntity(NewsDto dto) {
         return NewsEntity.builder()
+                .id(dto.getId())
                 .title(dto.getTitle())
-                .originallink(dto.getOriginallink())
+                .originalLink(dto.getOriginalLink())
                 .link(dto.getLink())
                 .description(dto.getDescription())
                 .pubDate(dto.getPubDate())

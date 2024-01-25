@@ -1,6 +1,5 @@
 package com.projectBackend.project.news;
 
-
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -17,16 +16,16 @@ public class NewsEntity {
     @Id
     private String id;
     private String title;
-    private String originallink;
+    private String originalLink;
     private String link;
     private String description;
     private String pubDate;
 
     @Builder
-    public NewsEntity(String id, String title, String originallink, String link, String description, String pubDate) {
+    public NewsEntity(String id, String title, String originalLink, String link, String description, String pubDate) {
         this.id = id;
         this.title = title;
-        this.originallink = originallink;
+        this.originalLink = originalLink;
         this.link = link;
         this.description = description;
         this.pubDate = pubDate;
