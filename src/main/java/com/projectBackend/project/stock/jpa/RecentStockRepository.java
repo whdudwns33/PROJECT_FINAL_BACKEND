@@ -4,8 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface StockRepository extends JpaRepository<StockEntity, Long> {
+public interface RecentStockRepository extends JpaRepository<RecentStockEntity, Long> {
     List<StockEntity> findByStockNameContainingIgnoreCase(String stockName);
-//    boolean existsByStockDateStartingWith(String yearMonth);
-
+    boolean existsByStockDateStartingWith(String yearMonth);
 }

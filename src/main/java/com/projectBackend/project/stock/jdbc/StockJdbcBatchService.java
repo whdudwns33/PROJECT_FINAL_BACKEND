@@ -6,8 +6,10 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Table;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -20,9 +22,12 @@ public class StockJdbcBatchService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void batchInsert(List<StockDto> stockDtoList) {
+    public void batchInsert(List<StockDto> stockDtoList, Class<?> entityClass) {
         log.info("batchInsert");
-        String sql = "INSERT INTO stock (stock_open, stock_high, stock_low, stock_close, " +
+
+        String tableName = getTableName(entityClass);
+
+        String sql = "INSERT INTO " + tableName + " (stock_open, stock_high, stock_low, stock_close, " +
                 "stock_volume, stock_trading_value, stock_fluctuation_rate, stock_date, stock_code, " +
                 "stock_name, stock_bps, stock_per, stock_pbr, stock_eps, stock_div, stock_dps) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -41,40 +46,29 @@ public class StockJdbcBatchService {
         });
     }
 
-    public void batchUpdate(List<StockDto> stockDtoList) {
+    public void batchUpdate(List<StockDto> stockDtoList, Class<?> entityClass) {
         log.info("batchUpdate");
 
-        int batchSize = 10000; // 한 달 치 데이터를 10000개씩 분리
-        int totalSize = stockDtoList.size();
+        executeDelete(entityClass);
+        batchInsert(stockDtoList, entityClass);
 
-        for (int fromIndex = 0; fromIndex < totalSize; fromIndex += batchSize) {
-            int toIndex = Math.min(fromIndex + batchSize, totalSize);
-
-            List<StockDto> subList = stockDtoList.subList(fromIndex, toIndex);
-            executeBatchUpdate(subList);
-        }
     }
 
-    private void executeBatchUpdate(List<StockDto> batch) {
-        String sql = "UPDATE stock SET stock_open=?, stock_high=?, stock_low=?, " +
-                "stock_close=?, stock_volume=?, stock_trading_value=?, " +
-                "stock_fluctuation_rate=?, stock_date=?, stock_code=?, stock_name=?, " +
-                "stock_bps=?, stock_per=?, stock_pbr=?, stock_eps=?, " +
-                "stock_div=?, stock_dps=? WHERE stock_code=? AND stock_date=?";
-        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
-                StockDto stockDto = batch.get(i);
-                setPreparedStatementParameters(preparedStatement, stockDto);
-                preparedStatement.setString(17, stockDto.getStockCode());
-                preparedStatement.setString(18, stockDto.getDate());
-            }
+    private void executeDelete(Class<?> entityClass) {
+        String tableName = getTableName(entityClass);
 
-            @Override
-            public int getBatchSize() {
-                return 100; // 분리한 데이터 덩어리를 쪼개서 Batch Update
-            }
-        });
+        // Delete all existing data
+        String deleteSql = "DELETE FROM " + tableName;
+        jdbcTemplate.update(deleteSql);
+    }
+
+    private String getTableName(Class<?> entityClass) {
+        Table tableAnnotation = entityClass.getAnnotation(Table.class);
+        if (tableAnnotation != null) {
+            return tableAnnotation.name();
+        } else {
+            throw new IllegalArgumentException("Entity class is missing @Table annotation.");
+        }
     }
 
 

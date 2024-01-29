@@ -1,20 +1,22 @@
 package com.projectBackend.project.stock.jpa;
 
+// RecentStockEntity.java
 import lombok.*;
 
 import javax.persistence.*;
+
 @Entity
-@Table(name = "stock")
+@Table(name = "recent_stock")
 @Getter
 @Setter
 @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockEntity {
+public class RecentStockEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long stockId;
+    private Long recentStockId;
 
     private String stockDate;
     private String stockCode;
@@ -32,6 +34,4 @@ public class StockEntity {
     private String stockEps;
     private String stockDiv;
     private String stockDps;
-
 }
-
