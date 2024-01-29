@@ -20,8 +20,8 @@ public class StockSchedularService {
     private final ObjectMapper objectMapper;
     private final StockService stockService;
 
-    @Value("${flask.data.path}")
-    private String flaskDataPath;
+//    @Value("${flask.data.path}")
+//    private String flaskDataPath;
 
     @Scheduled(fixedRate = 1000 * 60 * 2)
     public void pullRequest() throws JsonProcessingException {

@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.projectBackend.project.utils.Common.date;
 
 @Service
 @Slf4j
@@ -72,4 +75,36 @@ public class StockService {
         // 해당 년월에 해당하는 데이터가 존재하는지 여부를 체크하는 쿼리
         return recentStockRepository.existsByStockDateStartingWith(yearMonth);
     }
+
+
+    // 조영준 : 해당 날짜의 주식 리스트 조회
+    public List<StockDto> getStockList(String type) {
+        List<RecentStockEntity> stockEntities = recentStockRepository.findTop200ByOrderByStockHighDesc(date);
+        List<StockDto> stockDtoList = new ArrayList<>();
+
+        for (RecentStockEntity recentStockEntity : stockEntities) {
+            StockDto stockDto = new StockDto();
+            stockDto.setOpen(recentStockEntity.getStockOpen());
+            stockDto.setHigh(recentStockEntity.getStockHigh());
+            stockDto.setLow(recentStockEntity.getStockLow());
+            stockDto.setClose(recentStockEntity.getStockClose());
+            stockDto.setVolume(recentStockEntity.getStockVolume());
+            stockDto.setTradingValue(recentStockEntity.getStockTradingValue());
+            stockDto.setFluctuationRate(recentStockEntity.getStockFluctuationRate());
+            stockDto.setDate(recentStockEntity.getStockDate());
+            stockDto.setStockCode(recentStockEntity.getStockCode());
+            stockDto.setStockName(recentStockEntity.getStockName());
+            stockDto.setBps(recentStockEntity.getStockBps());
+            stockDto.setPer(recentStockEntity.getStockPer());
+            stockDto.setPbr(recentStockEntity.getStockPbr());
+            stockDto.setEps(recentStockEntity.getStockEps());
+            stockDto.setDiv(recentStockEntity.getStockDiv());
+            stockDto.setDps(recentStockEntity.getStockDps());
+
+            stockDtoList.add(stockDto);
+        }
+
+        return stockDtoList;
+    }
+
 }

@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Component
@@ -21,6 +23,12 @@ public class Common {
     public static String clientId = "a42a4db55c114cff5770a883fc8607f9";
     public static String redirectUri = "http://localhost:3000/kakao";
     public static String clientSecret = "Xs7FwH1FUNOkspaOszcuw2wZXTQGrEIs";
+
+    // 날짜
+    // 현재 날짜
+    public static LocalDate localDate = LocalDate.now();
+    // localDate를 문자열로 변환하여 사용할 수 있도록 수정
+    public static String date = localDate.toString();
 
 
 }
