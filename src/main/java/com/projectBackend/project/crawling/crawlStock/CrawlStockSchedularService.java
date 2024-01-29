@@ -19,7 +19,7 @@ public class CrawlStockSchedularService {
     // 파이썬 크롤링 데이터 저장
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final CrawlStockRpository crawlStockRpository;
+    private final CrawlStockRepository crawlStockRepository;
 
     // 1시간
     @Scheduled(fixedRate = 1000 * 60 * 60)
@@ -33,7 +33,7 @@ public class CrawlStockSchedularService {
         assert stockData != null;
         List<CrawlStockDto> stockDtoList = objectMapper.readValue(stockData, new TypeReference<List<CrawlStockDto>>() {});
         // 데이터 최신화를 위해 삭제
-        crawlStockRpository.deleteAll();        
+        crawlStockRepository.deleteAll();
         for( CrawlStockDto crawlStockDto : stockDtoList) {
             CrawlStockEntity crawlStockEntity = CrawlStockEntity.builder()
                     .stockName(crawlStockDto.getName())
@@ -41,7 +41,7 @@ public class CrawlStockSchedularService {
                     .stockUpDown(crawlStockDto.getUpDown())
                     .stockRate(crawlStockDto.getRate())
                     .build();
-            crawlStockRpository.save(crawlStockEntity);
+            crawlStockRepository.save(crawlStockEntity);
         }
     }
 }
