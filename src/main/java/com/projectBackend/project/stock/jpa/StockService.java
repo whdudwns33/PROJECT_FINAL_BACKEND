@@ -77,34 +77,58 @@ public class StockService {
     }
 
 
-    // 조영준 : 해당 날짜의 주식 리스트 조회
+    // 조영준 : 주식 리스트 출력
     public List<StockDto> getStockList(String type) {
-        List<RecentStockEntity> stockEntities = recentStockRepository.findTop200ByOrderByStockHighDesc(date);
+        log.info("today_date : {}", date);
         List<StockDto> stockDtoList = new ArrayList<>();
 
-        for (RecentStockEntity recentStockEntity : stockEntities) {
-            StockDto stockDto = new StockDto();
-            stockDto.setOpen(recentStockEntity.getStockOpen());
-            stockDto.setHigh(recentStockEntity.getStockHigh());
-            stockDto.setLow(recentStockEntity.getStockLow());
-            stockDto.setClose(recentStockEntity.getStockClose());
-            stockDto.setVolume(recentStockEntity.getStockVolume());
-            stockDto.setTradingValue(recentStockEntity.getStockTradingValue());
-            stockDto.setFluctuationRate(recentStockEntity.getStockFluctuationRate());
-            stockDto.setDate(recentStockEntity.getStockDate());
-            stockDto.setStockCode(recentStockEntity.getStockCode());
-            stockDto.setStockName(recentStockEntity.getStockName());
-            stockDto.setBps(recentStockEntity.getStockBps());
-            stockDto.setPer(recentStockEntity.getStockPer());
-            stockDto.setPbr(recentStockEntity.getStockPbr());
-            stockDto.setEps(recentStockEntity.getStockEps());
-            stockDto.setDiv(recentStockEntity.getStockDiv());
-            stockDto.setDps(recentStockEntity.getStockDps());
+        List<RecentStockEntity> stockEntities;
+        switch (type) {
+            case "고가":
+                stockEntities = recentStockRepository.findTop200ByOrderByStockHighDesc(date);
+                break;
+            case "eps":
+                stockEntities = recentStockRepository.findTop200ByOrderByStockEpsDesc(date);
+                break;
+            case "per":
+                stockEntities = recentStockRepository.findTop200ByOrderByStockPerAsc(date);
+                break;
+            case "div":
+                stockEntities = recentStockRepository.findTop200ByOrderByStockDivDesc(date);
+                break;
+            default:
+                log.info("잘못된 접근입니다.");
+                return stockDtoList;
+        }
 
+        for (RecentStockEntity recentStockEntity : stockEntities) {
+            StockDto stockDto = createStockDtoFromEntity(recentStockEntity);
             stockDtoList.add(stockDto);
         }
 
         return stockDtoList;
     }
 
+    // Entity to Dto
+    private StockDto createStockDtoFromEntity(RecentStockEntity recentStockEntity) {
+        StockDto stockDto = new StockDto();
+        stockDto.setOpen(recentStockEntity.getStockOpen());
+        stockDto.setHigh(recentStockEntity.getStockHigh());
+        stockDto.setLow(recentStockEntity.getStockLow());
+        stockDto.setClose(recentStockEntity.getStockClose());
+        stockDto.setVolume(recentStockEntity.getStockVolume());
+        stockDto.setTradingValue(recentStockEntity.getStockTradingValue());
+        stockDto.setFluctuationRate(recentStockEntity.getStockFluctuationRate());
+        stockDto.setDate(recentStockEntity.getStockDate());
+        stockDto.setStockCode(recentStockEntity.getStockCode());
+        stockDto.setStockName(recentStockEntity.getStockName());
+        stockDto.setBps(recentStockEntity.getStockBps());
+        stockDto.setPer(recentStockEntity.getStockPer());
+        stockDto.setPbr(recentStockEntity.getStockPbr());
+        stockDto.setEps(recentStockEntity.getStockEps());
+        stockDto.setDiv(recentStockEntity.getStockDiv());
+        stockDto.setDps(recentStockEntity.getStockDps());
+
+        return stockDto;
+    }
 }
