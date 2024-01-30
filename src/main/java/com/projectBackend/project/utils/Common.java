@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -27,8 +28,8 @@ public class Common {
     // 날짜
     // 현재 날짜
     public static LocalDate localDate = LocalDate.now();
-    // localDate를 문자열로 변환하여 사용할 수 있도록 수정
-    public static String date = localDate.toString();
+    // localDate를 문자열로 변환하여 사용할 수 있도록 수정. YYYYMMDD 형식
+    public static String date = localDate.format(DateTimeFormatter.BASIC_ISO_DATE);
 
 
 }

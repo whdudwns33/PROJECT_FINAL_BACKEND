@@ -80,20 +80,20 @@ public class StockService {
     // 조영준 : 주식 리스트 출력
     public List<StockDto> getStockList(String type) {
         log.info("today_date : {}", date);
+        log.info("type : {}", type);
         List<StockDto> stockDtoList = new ArrayList<>();
-
         List<RecentStockEntity> stockEntities;
         switch (type) {
             case "고가":
                 stockEntities = recentStockRepository.findTop200ByOrderByStockHighDesc(date);
                 break;
-            case "eps":
+            case "EPS":
                 stockEntities = recentStockRepository.findTop200ByOrderByStockEpsDesc(date);
                 break;
-            case "per":
+            case "PER":
                 stockEntities = recentStockRepository.findTop200ByOrderByStockPerAsc(date);
                 break;
-            case "div":
+            case "DIV":
                 stockEntities = recentStockRepository.findTop200ByOrderByStockDivDesc(date);
                 break;
             default:
