@@ -1,6 +1,7 @@
 package com.projectBackend.project.stock.elastic;
 
 import com.projectBackend.project.stock.StockDto;
+import com.projectBackend.project.stock.jpa.RecentStockEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,30 +32,43 @@ public class StockElasticService {
 
     @Transactional
     public void saveStocksToElasticsearch(Map<String, List<StockDto>> stockDataMap) {
+        // Get the current year and month
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMM");
+        String currentYearMonth = currentDate.format(formatter);
+
         for (Map.Entry<String, List<StockDto>> entry : stockDataMap.entrySet()) {
             String yearMonth = entry.getKey();
-            log.info("save yearMonth {}", yearMonth);
-            List<StockDto> stockDtoList = entry.getValue();
 
-            // Elasticsearch에서 해당 날짜의 데이터 삭제
-            deleteDataByYearMonth(yearMonth);
+            // 들어온 데이터의 key가 현재 년월인지?
+            if (currentYearMonth.equals(yearMonth)) {
+                log.info("save yearMonth {}", yearMonth);
+                List<StockDto> stockDtoList = entry.getValue();
 
-            // Bulk Insert
-            List<StockElasticEntity> elasticEntities = convertToElasticEntities(stockDtoList);
-            bulkInsert(elasticEntities);
+                // Elasticsearch에서 데이터 삭제
+                deleteData();
+
+                // Bulk Insert
+                List<StockElasticEntity> elasticEntities = convertToElasticEntities(stockDtoList);
+                bulkInsert(elasticEntities);
+            }
         }
     }
 
-    private void deleteDataByYearMonth(String yearMonth) {
-        // StockElasticRepository를 통한 삭제
-//        stockElasticRepository.deleteByStockDateStartingWith(yearMonth);
+    private void deleteData() {
+        // 해당 년월에 해당하는 데이터가 존재하는지 여부를 체크하는 쿼리
+        if (stockElasticRepository.count() > 0) {
+            // index truncate
+            stockElasticRepository.deleteAll();
+        }
+
     }
 
     private void bulkInsert(List<StockElasticEntity> elasticEntities) {
         List<IndexQuery> indexQueries = new ArrayList<>();
         for (StockElasticEntity elasticEntity : elasticEntities) {
             IndexQuery indexQuery = new IndexQueryBuilder()
-                    .withId(elasticEntity.getId())
+//                    .withId(elasticEntity.getId())
                     .withObject(elasticEntity)
                     .build();
             indexQueries.add(indexQuery);
@@ -69,7 +85,7 @@ public class StockElasticService {
 
         for (StockDto stockDto : stockDtoList) {
             StockElasticEntity elasticEntity = new StockElasticEntity();
-            elasticEntity.setId(stockDto.getStockCode() + "_" + stockDto.getDate());
+
             elasticEntity.setStockOpen(stockDto.getOpen());
             elasticEntity.setStockHigh(stockDto.getHigh());
             elasticEntity.setStockLow(stockDto.getLow());
@@ -86,6 +102,8 @@ public class StockElasticService {
             elasticEntity.setStockEps(stockDto.getEps());
             elasticEntity.setStockDiv(stockDto.getDiv());
             elasticEntity.setStockDps(stockDto.getDps());
+
+            elasticEntity.generateId(); // ID 생성 메서드 호출
 
             elasticEntities.add(elasticEntity);
         }

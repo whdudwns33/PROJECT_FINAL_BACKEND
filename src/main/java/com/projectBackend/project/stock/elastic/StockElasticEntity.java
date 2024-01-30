@@ -34,4 +34,8 @@ public class StockElasticEntity {
     private Double stockEps;
     private Double stockDiv;
     private Double stockDps;
+
+    public void generateId() {
+        this.id = this.stockCode + "_" + this.stockDate.getTime();
+    }
 }

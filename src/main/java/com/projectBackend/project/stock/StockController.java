@@ -25,8 +25,8 @@ public class StockController {
 
 //        System.out.println(stockDataMap.values());
         // elasticSearch에 저장 코드 추가
-//        log.info("Stock Data Elastic load");
-//        stockElasticService.saveStocksToElasticsearch(stockDataMap);
+        log.info("Stock Data Elastic load");
+        stockElasticService.saveStocksToElasticsearch(stockDataMap);
 
         log.info("Stock Data Process");
         stockService.batchInsertOrUpdate(stockDataMap);
