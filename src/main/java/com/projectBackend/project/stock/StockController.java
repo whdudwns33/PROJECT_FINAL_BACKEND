@@ -22,9 +22,11 @@ public class StockController {
     private final StockElasticService stockElasticService;
     @PostMapping("/data")
     public ResponseEntity<String> loadStock(@RequestBody Map<String, List<StockDto>> stockDataMap) {
+
+//        System.out.println(stockDataMap.values());
         // elasticSearch에 저장 코드 추가
 //        log.info("Stock Data Elastic load");
-//        stockElasticService.saveStocksToElasticsearch(stockDtoList);
+//        stockElasticService.saveStocksToElasticsearch(stockDataMap);
 
         log.info("Stock Data Process");
         stockService.batchInsertOrUpdate(stockDataMap);

@@ -35,13 +35,14 @@ public class StockService {
         String currentYearMonth = currentDate.format(formatter);
 
         for (Map.Entry<String, List<StockDto>> entry : stockDataMap.entrySet()) {
+
             String yearMonth = entry.getKey();
             List<StockDto> stockDtoList = entry.getValue();
 
             // 들어온 데이터의 key가 현재 년월인지?
             if (currentYearMonth.equals(yearMonth)) {
                 // DB안에 현재 년월에 해당하는 데이터가 존재하는지?
-                if (existsDataForYearMonth(yearMonth)) {
+                if (existsData()) {
                     // 존재하면 recent_stock에 update
                     stockJdbcBatchService.batchUpdate(stockDtoList, RecentStockEntity.class);
                 } else {
@@ -53,61 +54,45 @@ public class StockService {
                 stockJdbcBatchService.batchInsert(stockDtoList, StockEntity.class);
             }
         }
-
-
-//        for (String yearMonth : stockDataMap.keySet()) {
-//            // 해당 년월에 해당하는 데이터가 있는지 체크
-//            boolean dataExists = existsDataForYearMonth(yearMonth);
-//
-//            if (dataExists) {
-////                // 데이터가 이미 존재하면 Batch Update 수행
-//                List<StockDto> stockDtoList = stockDataMap.get(yearMonth);
-//                stockJdbcBatchService.batchUpdate(stockDtoList);
-//            } else {
-////                // 데이터가 없으면 Batch Insert 수행
-//                List<StockDto> stockDtoList = stockDataMap.get(yearMonth);
-//                stockJdbcBatchService.batchInsert(stockDtoList);
-//            }
-//        }
     }
 
-    private boolean existsDataForYearMonth(String yearMonth) {
+    private boolean existsData() {
         // 해당 년월에 해당하는 데이터가 존재하는지 여부를 체크하는 쿼리
-        return recentStockRepository.existsByStockDateStartingWith(yearMonth);
+        return recentStockRepository.count() > 0;
     }
 
 
     // 조영준 : 주식 리스트 출력
-    public List<StockDto> getStockList(String type) {
-        log.info("today_date : {}", date);
-        log.info("type : {}", type);
-        List<StockDto> stockDtoList = new ArrayList<>();
-        List<RecentStockEntity> stockEntities;
-        switch (type) {
-            case "고가":
-                stockEntities = recentStockRepository.findTop200ByOrderByStockHighDesc(date);
-                break;
-            case "EPS":
-                stockEntities = recentStockRepository.findTop200ByOrderByStockEpsDesc(date);
-                break;
-            case "PER":
-                stockEntities = recentStockRepository.findTop200ByOrderByStockPerAsc(date);
-                break;
-            case "DIV":
-                stockEntities = recentStockRepository.findTop200ByOrderByStockDivDesc(date);
-                break;
-            default:
-                log.info("잘못된 접근입니다.");
-                return stockDtoList;
-        }
-
-        for (RecentStockEntity recentStockEntity : stockEntities) {
-            StockDto stockDto = createStockDtoFromEntity(recentStockEntity);
-            stockDtoList.add(stockDto);
-        }
-
-        return stockDtoList;
-    }
+//    public List<StockDto> getStockList(String type) {
+//        log.info("today_date : {}", date);
+//        log.info("type : {}", type);
+//        List<StockDto> stockDtoList = new ArrayList<>();
+//        List<RecentStockEntity> stockEntities;
+//        switch (type) {
+//            case "고가":
+//                stockEntities = recentStockRepository.findTop200ByOrderByStockHighDesc(date);
+//                break;
+//            case "EPS":
+//                stockEntities = recentStockRepository.findTop200ByOrderByStockEpsDesc(date);
+//                break;
+//            case "PER":
+//                stockEntities = recentStockRepository.findTop200ByOrderByStockPerAsc(date);
+//                break;
+//            case "DIV":
+//                stockEntities = recentStockRepository.findTop200ByOrderByStockDivDesc(date);
+//                break;
+//            default:
+//                log.info("잘못된 접근입니다.");
+//                return stockDtoList;
+//        }
+//
+//        for (RecentStockEntity recentStockEntity : stockEntities) {
+//            StockDto stockDto = createStockDtoFromEntity(recentStockEntity);
+//            stockDtoList.add(stockDto);
+//        }
+//
+//        return stockDtoList;
+//    }
 
     // Entity to Dto
     private StockDto createStockDtoFromEntity(RecentStockEntity recentStockEntity) {

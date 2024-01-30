@@ -1,8 +1,16 @@
 package com.projectBackend.project.stock;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 // @JsonProperty 애노테이션은
 // Jackson 라이브러리에서 사용되며, 객체를 JSON으로 직렬화(serialize)하거나
@@ -20,33 +28,35 @@ import lombok.ToString;
 // 따라서 @JsonProperty를 사용함으로써 Jackson은 해당 필드를 JSON으로 직렬화할 때,
 // 혹은 '*** JSON에서 객체로 역직렬화할 때 사용되는 키의 이름을 명시적으로 설정 ***'  할 수 있습니다.
 
+@Slf4j
 @Getter
 @Setter
 @ToString
 public class StockDto {
     @JsonProperty("시가")
-    private String open;
+    private Long open;
 
     @JsonProperty("고가")
-    private String high;
+    private Long high;
 
     @JsonProperty("저가")
-    private String low;
+    private Long low;
 
     @JsonProperty("종가")
-    private String close;
+    private Long close;
 
     @JsonProperty("거래량")
-    private String volume;
+    private Long volume;
 
     @JsonProperty("거래대금")
-    private String tradingValue;
+    private Long tradingValue;
 
     @JsonProperty("등락률")
-    private String fluctuationRate;
+    private Double fluctuationRate;
 
     @JsonProperty("날짜")
-    private String date;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMdd")
+    private Date date;
 
     @JsonProperty("종목코드")
     private String stockCode;
@@ -55,20 +65,20 @@ public class StockDto {
     private String stockName;
 
     @JsonProperty("BPS")
-    private String bps;
+    private Double bps;
 
     @JsonProperty("PER")
-    private String per;
+    private Double per;
 
     @JsonProperty("PBR")
-    private String pbr;
+    private Double pbr;
 
     @JsonProperty("EPS")
-    private String eps;
+    private Double eps;
 
     @JsonProperty("DIV")
-    private String div;
+    private Double div;
 
     @JsonProperty("DPS")
-    private String dps;
+    private Double dps;
 }

@@ -25,10 +25,10 @@ public class CommonContoroller {
     public ResponseEntity<MultiDto> stockIndex() {
         return ResponseEntity.ok(commonService.getIndex());
     }
-
-    @GetMapping("/list")
-    public ResponseEntity<List<StockDto>> stockList (@RequestParam String type) {
-        return ResponseEntity.ok(stockService.getStockList(type));
-    }
+//
+//    @GetMapping("/list")
+//    public ResponseEntity<List<StockDto>> stockList (@RequestParam String type) {
+//        return ResponseEntity.ok(stockService.getStockList(type));
+//    }
 
 }

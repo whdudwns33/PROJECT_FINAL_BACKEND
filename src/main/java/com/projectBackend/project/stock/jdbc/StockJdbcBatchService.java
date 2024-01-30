@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.Table;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,22 +75,33 @@ public class StockJdbcBatchService {
 
     private void setPreparedStatementParameters(PreparedStatement preparedStatement, StockDto stockDto)
             throws SQLException {
-        preparedStatement.setString(1, stockDto.getOpen());
-        preparedStatement.setString(2, stockDto.getHigh());
-        preparedStatement.setString(3, stockDto.getLow());
-        preparedStatement.setString(4, stockDto.getClose());
-        preparedStatement.setString(5, stockDto.getVolume());
-        preparedStatement.setString(6, stockDto.getTradingValue());
-        preparedStatement.setString(7, stockDto.getFluctuationRate());
-        preparedStatement.setString(8, stockDto.getDate());
+        preparedStatement.setLong(1, stockDto.getOpen());
+        preparedStatement.setLong(2, stockDto.getHigh());
+        preparedStatement.setLong(3, stockDto.getLow());
+        preparedStatement.setLong(4, stockDto.getClose());
+        preparedStatement.setLong(5, stockDto.getVolume());
+        preparedStatement.setLong(6, stockDto.getTradingValue());
+        preparedStatement.setDouble(7, stockDto.getFluctuationRate());
+        preparedStatement.setDate(8, new java.sql.Date(stockDto.getDate().getTime()));
         preparedStatement.setString(9, stockDto.getStockCode());
         preparedStatement.setString(10, stockDto.getStockName());
-        preparedStatement.setString(11, stockDto.getBps());
-        preparedStatement.setString(12, stockDto.getPer());
-        preparedStatement.setString(13, stockDto.getPbr());
-        preparedStatement.setString(14, stockDto.getEps());
-        preparedStatement.setString(15, stockDto.getDiv());
-        preparedStatement.setString(16, stockDto.getDps());
+
+        // Double 값이 null이 아닌 경우에만 setDouble을 호출하고, null인 경우 setNull을 호출합니다.
+        setNullableDouble(11, preparedStatement, stockDto.getBps());
+        setNullableDouble(12, preparedStatement, stockDto.getPer());
+        setNullableDouble(13, preparedStatement, stockDto.getPbr());
+        setNullableDouble(14, preparedStatement, stockDto.getEps());
+        setNullableDouble(15, preparedStatement, stockDto.getDiv());
+        setNullableDouble(16, preparedStatement, stockDto.getDps());
+    }
+
+    // 보조 메서드: nullable한 Double 값 처리
+    private void setNullableDouble(int parameterIndex, PreparedStatement preparedStatement, Double value) throws SQLException {
+        if (value != null) {
+            preparedStatement.setDouble(parameterIndex, value);
+        } else {
+            preparedStatement.setNull(parameterIndex, Types.DOUBLE);
+        }
     }
 
 }

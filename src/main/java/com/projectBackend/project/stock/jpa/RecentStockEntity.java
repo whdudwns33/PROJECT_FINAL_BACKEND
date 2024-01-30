@@ -4,7 +4,7 @@ package com.projectBackend.project.stock.jpa;
 import lombok.*;
 
 import javax.persistence.*;
-
+import java.util.Date;
 @Entity
 @Table(name = "recent_stock")
 @Getter
@@ -18,20 +18,21 @@ public class RecentStockEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recentStockId;
 
-    private String stockDate;
+    @Temporal(TemporalType.DATE)
+    private Date stockDate;
     private String stockCode;
-    private String stockOpen;
-    private String stockHigh;
-    private String stockLow;
-    private String stockClose;
-    private String stockVolume;
-    private String stockTradingValue;
-    private String stockFluctuationRate;
+    private Long stockOpen;
+    private Long stockHigh;
+    private Long stockLow;
+    private Long stockClose;
+    private Long stockVolume;
+    private Long stockTradingValue;
+    private Double stockFluctuationRate;
     private String stockName;
-    private String stockBps;
-    private String stockPer;
-    private String stockPbr;
-    private String stockEps;
-    private String stockDiv;
-    private String stockDps;
+    private Double stockBps;
+    private Double stockPer;
+    private Double stockPbr;
+    private Double stockEps;
+    private Double stockDiv;
+    private Double stockDps;
 }
