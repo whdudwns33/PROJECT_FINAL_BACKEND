@@ -1,5 +1,6 @@
 package com.projectBackend.project.stock.jpa;
 
+import com.projectBackend.project.stock.StockDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +37,7 @@ public interface RecentStockRepository extends JpaRepository<RecentStockEntity, 
             "WHERE e2.stockDate = :date) ORDER BY e.stockDiv DESC")
     List<RecentStockEntity> findTop200ByOrderByStockDivDesc(@Param("date") @Temporal(TemporalType.DATE) Date date, Pageable pageable);
 
-}
+    // 최신 주식 데이터
+    @Query("SELECT e FROM RecentStockEntity e WHERE e.stockDate = (SELECT MAX(e2.stockDate) FROM RecentStockEntity e2 " +
+            "WHERE e2.stockName = :stockName) AND e.stockName = :stockName")
+    RecentStockEntity findLatestByName(@Param("stockName") String stockName);}

@@ -46,4 +46,9 @@ public class StockController {
             return ResponseEntity.ok(stocks);
         }
     }
+
+//    @GetMapping("/getStock")
+//    public ResponseEntity<StockDto> getStockInfo(@RequestParam String name) {
+//        ResponseEntity.ok()
+//    }
 }

@@ -105,6 +105,11 @@ public class StockService {
         return stockDtoList;
     }
 
+//    // 조영준 : 주식 정보 페이지 이름 기반
+//    public StockDto getStockInfoData(String name) {
+//
+//    }
+
     // Entity to Dto
     private StockDto createStockDtoFromEntity(RecentStockEntity recentStockEntity) {
         StockDto stockDto = new StockDto();
