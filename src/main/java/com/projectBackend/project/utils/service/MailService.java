@@ -20,8 +20,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 @Transactional
 public class MailService {
-    @Autowired
-    JavaMailSender emailsender;
+    private final JavaMailSender emailsender;
     public static String EPW;
     private final MemberRepository memberRepository;
     private String ePw; // 인증번호
@@ -51,7 +50,7 @@ public class MailService {
         msgg += "</div>";
         message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
         // 보내는 사람의 이메일 주소, 보내는 사람 이름
-        message.setFrom(new InternetAddress("collectcall1544@naver.com", "Admin"));// 보내는 사람
+        message.setFrom(new InternetAddress("jojo6807@naver.com", "Admin"));// 보내는 사람
 
         return message;
     }
