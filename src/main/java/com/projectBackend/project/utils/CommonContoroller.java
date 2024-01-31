@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
 import java.util.List;
 
 @Slf4j
@@ -25,10 +26,10 @@ public class CommonContoroller {
     public ResponseEntity<MultiDto> stockIndex() {
         return ResponseEntity.ok(commonService.getIndex());
     }
-//
-//    @GetMapping("/list")
-//    public ResponseEntity<List<StockDto>> stockList (@RequestParam String type) {
-//        return ResponseEntity.ok(stockService.getStockList(type));
-//    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<StockDto>> stockList (@RequestParam String type) throws ParseException {
+        return ResponseEntity.ok(stockService.getStockList(type));
+    }
 
 }

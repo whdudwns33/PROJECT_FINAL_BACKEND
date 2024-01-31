@@ -4,16 +4,22 @@ import com.projectBackend.project.stock.StockDto;
 import com.projectBackend.project.stock.jdbc.StockJdbcBatchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.projectBackend.project.utils.Common.date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 @Service
 @Slf4j
@@ -63,36 +69,41 @@ public class StockService {
 
 
     // 조영준 : 주식 리스트 출력
-//    public List<StockDto> getStockList(String type) {
-//        log.info("today_date : {}", date);
-//        log.info("type : {}", type);
-//        List<StockDto> stockDtoList = new ArrayList<>();
-//        List<RecentStockEntity> stockEntities;
-//        switch (type) {
-//            case "고가":
-//                stockEntities = recentStockRepository.findTop200ByOrderByStockHighDesc(date);
-//                break;
-//            case "EPS":
-//                stockEntities = recentStockRepository.findTop200ByOrderByStockEpsDesc(date);
-//                break;
-//            case "PER":
-//                stockEntities = recentStockRepository.findTop200ByOrderByStockPerAsc(date);
-//                break;
-//            case "DIV":
-//                stockEntities = recentStockRepository.findTop200ByOrderByStockDivDesc(date);
-//                break;
-//            default:
-//                log.info("잘못된 접근입니다.");
-//                return stockDtoList;
-//        }
-//
-//        for (RecentStockEntity recentStockEntity : stockEntities) {
-//            StockDto stockDto = createStockDtoFromEntity(recentStockEntity);
-//            stockDtoList.add(stockDto);
-//        }
-//
-//        return stockDtoList;
-//    }
+    public List<StockDto> getStockList(String type) throws ParseException {
+        Date date = new Date();
+
+        // Date date = dateFormat.parse(formattedDate);
+        // 무한 스크롤을 위한 임시 200개 세팅
+        Pageable pageable = PageRequest.of(0, 200);
+        log.info("today_date : {}", date);
+        log.info("type : {}", type);
+        List<StockDto> stockDtoList = new ArrayList<>();
+        List<RecentStockEntity> stockEntities;
+        switch (type) {
+            case "고가":
+                stockEntities = recentStockRepository.findTop200ByOrderByStockHighDesc(date, pageable);
+                break;
+            case "EPS":
+                stockEntities = recentStockRepository.findTop200ByOrderByStockEpsDesc(date, pageable);
+                break;
+            case "PER":
+                stockEntities = recentStockRepository.findTop200ByOrderByStockPerAsc(date, pageable);
+                break;
+            case "DIV":
+                stockEntities = recentStockRepository.findTop200ByOrderByStockDivDesc(date, pageable);
+                break;
+            default:
+                log.info("잘못된 접근입니다.");
+                return stockDtoList;
+        }
+
+        for (RecentStockEntity recentStockEntity : stockEntities) {
+            StockDto stockDto = createStockDtoFromEntity(recentStockEntity);
+            stockDtoList.add(stockDto);
+        }
+
+        return stockDtoList;
+    }
 
     // Entity to Dto
     private StockDto createStockDtoFromEntity(RecentStockEntity recentStockEntity) {
