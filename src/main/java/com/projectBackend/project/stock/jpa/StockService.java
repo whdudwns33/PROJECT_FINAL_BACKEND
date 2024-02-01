@@ -23,7 +23,7 @@ import java.util.Date;
 
 @Service
 @Slf4j
-//@Transactional
+@Transactional
 @RequiredArgsConstructor
 public class StockService {
     private final StockRepository stockRepository;
@@ -33,7 +33,6 @@ public class StockService {
     public List<StockEntity> getStockByName(String stockName) {
         return stockRepository.findByStockNameContainingIgnoreCase(stockName);
     }
-    @Transactional
     public void batchInsertOrUpdate(Map<String, List<StockDto>> stockDataMap) {
         // Get the current year and month
         LocalDate currentDate = LocalDate.now();
