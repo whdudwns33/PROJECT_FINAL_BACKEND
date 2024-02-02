@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Builder
@@ -22,6 +23,8 @@ public class MemberDto {
     Date birth;
     @Enumerated(EnumType.STRING)
     private Authority authority;
+
+    LocalDateTime registrationDate;
 
     // Dto를 entity로
     public MemberEntity toMemberEntity (PasswordEncoder passwordEncoder) {
@@ -43,6 +46,7 @@ public class MemberDto {
                 .nickName(member.getMemberNickName())
                 .birth(member.getBirth())
                 .authority(member.getAuthority())
+                .registrationDate(member.getRegistrationDate())
                 .build();
     }
 
