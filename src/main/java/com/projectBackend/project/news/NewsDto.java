@@ -1,12 +1,8 @@
 package com.projectBackend.project.news;
 
-import com.projectBackend.project.constant.Authority;
-import com.projectBackend.project.member.MemberDto;
-import com.projectBackend.project.member.MemberEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @Setter

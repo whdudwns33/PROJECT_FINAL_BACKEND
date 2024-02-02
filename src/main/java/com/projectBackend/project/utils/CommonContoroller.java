@@ -1,7 +1,6 @@
 package com.projectBackend.project.utils;
 
 import com.projectBackend.project.stock.StockDto;
-import com.projectBackend.project.stock.jpa.RecentStockEntity;
 import com.projectBackend.project.stock.jpa.StockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

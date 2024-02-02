@@ -22,5 +22,4 @@ public class Common {
     public static String clientId = "a42a4db55c114cff5770a883fc8607f9";
     public static String redirectUri = "http://localhost:3000/kakao";
     public static String clientSecret = "Xs7FwH1FUNOkspaOszcuw2wZXTQGrEIs";
-
 }

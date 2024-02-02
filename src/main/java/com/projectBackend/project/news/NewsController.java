@@ -16,13 +16,13 @@ public class NewsController {
 
     // 파이썬 데이터 저장
     @PostMapping("/save")
-    public ResponseEntity<Boolean> saveNewsToEntity (@RequestBody List<NewsDto> newsDtos) {
+    public ResponseEntity<Boolean> saveNewsToEntity (@RequestBody List<NewsDto> newsDtos) throws IOException {
         return ResponseEntity.ok(newsService.saveToElastic(newsDtos));
     }
 
     // 검색 엔진
     @GetMapping("/search")
-    public ResponseEntity<List<NewsDto>> searchNews (@RequestParam List<String> fields, String token) throws IOException {
-        return ResponseEntity.ok(newsService.searchByTokenizer(fields, token));
+    public ResponseEntity<List<NewsDto>> searchNews (@RequestParam String token) throws IOException {
+        return ResponseEntity.ok(newsService.searchByTokenizer(token));
     }
 }

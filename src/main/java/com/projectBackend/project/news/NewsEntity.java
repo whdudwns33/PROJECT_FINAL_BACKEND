@@ -1,10 +1,12 @@
 package com.projectBackend.project.news;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import javax.persistence.Id;
 
@@ -15,8 +17,11 @@ public class NewsEntity {
 
     @Id
     private String id;
+
     private String title;
+    @Field(type = FieldType.Keyword)
     private String originalLink;
+    @Field(type = FieldType.Text)
     private String link;
     private String description;
     private String pubDate;
