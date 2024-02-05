@@ -18,6 +18,7 @@ public class WebSocketService {
     @Autowired
     private WebSocketHandler webSocketHandler;
 
+    // 제네릭 < T > 알아보기
     public void broadcastStockData(String roomId, Map<String, List<StockDto>> stockDataMap) {
         // Convert stockDataMap to a JSON string
         String messageJson = convertMapToJson(stockDataMap);

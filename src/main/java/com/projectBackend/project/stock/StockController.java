@@ -34,7 +34,7 @@ public class StockController {
         log.info("Stock Data Process");
         stockService.batchInsertOrUpdate(stockDataMap);
 
-        webSocketService.broadcastStockData("stock", stockDataMap);
+        webSocketService.broadcastStockData("mypage", stockDataMap);
 
 
         log.info("Stock Data received successfully");
