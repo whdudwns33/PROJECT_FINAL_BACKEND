@@ -18,10 +18,10 @@ public class WebSocketService {
     @Autowired
     private WebSocketHandler webSocketHandler;
 
-    // 제네릭 < T > 알아보기
-    public void broadcastStockData(String roomId, Map<String, List<StockDto>> stockDataMap) {
-        // Convert stockDataMap to a JSON string
-        String messageJson = convertMapToJson(stockDataMap);
+    // Use generics for the broadcastData method
+    public <T> void broadcastData(String roomId, Map<String, List<T>> dataMap) {
+        // Convert dataMap to a JSON string
+        String messageJson = convertMapToJson(dataMap);
 
         WebSocketMessageDto messageDto = WebSocketMessageDto.builder()
                 .type("STOCK_DATA")
@@ -58,7 +58,7 @@ public class WebSocketService {
         }
     }
 
-    private String convertMapToJson(Map<String, List<StockDto>> dataMap) {
+    private <T> String convertMapToJson(Map<String, List<T>> dataMap) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.writeValueAsString(dataMap);
