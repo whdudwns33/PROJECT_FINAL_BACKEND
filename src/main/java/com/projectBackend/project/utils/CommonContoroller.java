@@ -2,6 +2,8 @@ package com.projectBackend.project.utils;
 
 import com.projectBackend.project.stock.StockDto;
 import com.projectBackend.project.stock.jpa.StockService;
+import com.projectBackend.project.utils.websocket.WebSocketHandler;
+import com.projectBackend.project.utils.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.List;
 public class CommonContoroller {
     private final CommonService commonService;
     private final StockService stockService;
+    // 웹소켓
+    private final WebSocketService webSocketService;
 
     @GetMapping("/index")
     public ResponseEntity<MultiDto> stockIndex() {
@@ -27,8 +31,8 @@ public class CommonContoroller {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<StockDto>> stockList (@RequestParam String type) throws ParseException {
-        return ResponseEntity.ok(stockService.getStockList(type));
+    public ResponseEntity<String> stockList (@RequestParam String type) throws ParseException {
+        return ResponseEntity.ok(webSocketService.broadcastDtoData("stockList", type));
     }
 
 }

@@ -3,12 +3,15 @@ package com.projectBackend.project.utils.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectBackend.project.stock.StockDto;
+import com.projectBackend.project.stock.jpa.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +20,9 @@ public class WebSocketService {
 
     @Autowired
     private WebSocketHandler webSocketHandler;
+
+    @Autowired
+    private StockService stockService;
 
     // Use generics for the broadcastData method
     public <T> void broadcastData(String roomId, Map<String, List<T>> dataMap) {
@@ -36,6 +42,30 @@ public class WebSocketService {
                 sendMessage(session, convertMessageDtoToJson(messageDto));
             }
         }
+    }
+
+
+    // 주식 리스트 조회
+    public String broadcastDtoData(String roomId, String type) throws ParseException {
+        List<StockDto> stockDtos = stockService.getStockList(type);
+
+        // Dto리스트를 제이슨 문자열화
+        String messageJson = convertDtoToJson(stockDtos);
+
+        WebSocketMessageDto messageDto = WebSocketMessageDto.builder()
+                .type("STOCK_DATA")
+                .message(messageJson)
+                .build();
+
+        Map<String, List<WebSocketSession>> roomMap = webSocketHandler.getRoomMap();
+        List<WebSocketSession> roomSessions = roomMap.get(roomId);
+
+        if (roomSessions != null) {
+            for (WebSocketSession session : roomSessions) {
+                sendMessage(session, convertMessageDtoToJson(messageDto));
+            }
+        }
+        return convertMessageDtoToJson(messageDto);
     }
 
     private void sendMessage(WebSocketSession session, String message) {
@@ -66,6 +96,17 @@ public class WebSocketService {
             e.printStackTrace();
             // Handle the exception based on your application's requirements
             return ""; // Return an empty string or handle it accordingly
+        }
+    }
+
+    // 조영준 : 맵 대신 Dto로 받는 로직
+    private String convertDtoToJson(Object dto) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(dto);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "";
         }
     }
 }

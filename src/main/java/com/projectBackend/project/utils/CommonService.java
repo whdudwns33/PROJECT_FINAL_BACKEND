@@ -9,10 +9,16 @@ import com.projectBackend.project.crawling.crawlMetal.CrawlMetalService;
 import com.projectBackend.project.crawling.crawlOil.CrawlOilService;
 import com.projectBackend.project.crawling.crawlRate.CrawlRateService;
 import com.projectBackend.project.crawling.crawlStock.CrawlStockService;
+import com.projectBackend.project.stock.StockDto;
+import com.projectBackend.project.utils.websocket.WebSocketHandler;
+import com.projectBackend.project.utils.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -26,6 +32,7 @@ public class CommonService {
     private final CrawlMetalService crawlMetalService;
     private final CrawlMarketService crawlMarketService;
     private final CrawlGoldService crawlGoldService;
+
 
     public MultiDto getIndex() {
         try {
@@ -45,8 +52,4 @@ public class CommonService {
             return null;
        }
     }
-
-
-
-
 }
