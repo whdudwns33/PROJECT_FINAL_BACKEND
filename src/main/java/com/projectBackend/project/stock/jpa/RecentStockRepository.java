@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Temporal;
 import org.springframework.data.repository.query.Param;
 
 import javax.persistence.TemporalType;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +39,6 @@ public interface RecentStockRepository extends JpaRepository<RecentStockEntity, 
     List<RecentStockEntity> findTop200ByOrderByStockDivDesc(@Param("date") @Temporal(TemporalType.DATE) Date date, Pageable pageable);
 
     // 최신 주식 데이터
-    @Query("SELECT e FROM RecentStockEntity e WHERE e.stockDate = (SELECT MAX(e2.stockDate) FROM RecentStockEntity e2 " +
-            "WHERE e2.stockName = :stockName) AND e.stockName = :stockName")
-    RecentStockEntity findLatestByName(@Param("stockName") String stockName);}
+    @Query("SELECT e FROM RecentStockEntity e WHERE e.stockDate = :currentDate " +
+            "AND e.stockName = :stockName")
+    RecentStockEntity findLatestByName(@Param("stockName") String stockName,@Param("currentDate") Date currentDate);}

@@ -3,7 +3,11 @@ package com.projectBackend.project.stock.schedular;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.projectBackend.project.stock.jpa.RecentStockEntity;
+import com.projectBackend.project.stock.jpa.RecentStockRepository;
 import com.projectBackend.project.stock.jpa.StockService;
+import com.projectBackend.project.utils.websocket.WebSocketHandler;
+import com.projectBackend.project.utils.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.socket.WebSocketSession;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -19,6 +28,9 @@ public class StockSchedularService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final StockService stockService;
+    private final RecentStockRepository recentStockRepository;
+    private final WebSocketService webSocketService;
+    private final WebSocketHandler webSocketHandler;
 
 //    @Value("${flask.data.path}")
 //    private String flaskDataPath;
@@ -33,4 +45,43 @@ public class StockSchedularService {
         // 여기에 받은 데이터를 처리하는 로직 추가
         log.info("Stock data received from Flask: {}", stockData);
     }
+
+    @Scheduled(fixedRate = 1000 * 15)
+    public void brodcastRequest() {
+        for (Map.Entry<String, List<WebSocketSession>> entry : webSocketHandler.getRoomMap().entrySet()) {
+            String roomId = entry.getKey();
+            List<WebSocketSession> roomSessions = entry.getValue();
+
+            if (roomSessions != null && !roomSessions.isEmpty()) {
+                // 방의 첫 번째 세션을 대표로 사용
+                WebSocketSession representativeSession = roomSessions.get(0);
+
+                String name = webSocketHandler.extractName(representativeSession);
+                // 현재 날짜를 가져오는 코드
+
+                LocalDate localDate = LocalDate.now();
+
+                // LocalDate를 Date로 변환
+                Date currentDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+
+                RecentStockEntity latestStock = recentStockRepository.findLatestByName(name, currentDate);
+
+                if (latestStock != null) {
+//                    log.info("{} 주식의 최신 데이터를 방({})에 브로드캐스트합니다: {}", name, roomId, latestStock);
+
+                    // RecentStockEntity를 Map<String, List<RecentStockEntity>>으로 감싸기
+                    Map<String, List<RecentStockEntity>> data = new HashMap<>();
+                    data.put("latestStock", Collections.singletonList(latestStock));
+
+                    webSocketService.broadcastData(roomId, data);
+                } else {
+                    log.warn("주식에 대한 데이터를 찾을 수 없습니다: {}", name);
+                }
+            }
+        }
+
+    }
+
+
 }

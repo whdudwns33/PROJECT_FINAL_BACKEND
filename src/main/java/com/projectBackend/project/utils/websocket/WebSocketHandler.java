@@ -94,8 +94,26 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private String extractRoomId(WebSocketSession session) {
         String query = session.getUri().getQuery();
         if (query != null) {
-            String roomId = query.replace("room=", "");
-            return roomId.isEmpty() ? null : roomId;
+            String[] params = query.split("&");
+            for (String param : params) {
+                if (param.startsWith("room=")) {
+                    return param.substring("room=".length());
+                }
+            }
+        }
+        return null;
+    }
+
+    // 세션에서 name 추출
+    public String extractName(WebSocketSession session) {
+        String query = session.getUri().getQuery();
+        if (query != null) {
+            String[] params = query.split("&");
+            for (String param : params) {
+                if (param.startsWith("name=")) {
+                    return param.substring("name=".length());
+                }
+            }
         }
         return null;
     }

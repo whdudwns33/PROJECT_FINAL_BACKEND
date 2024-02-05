@@ -22,7 +22,6 @@ public class StockController {
     private final StockService stockService;
     private final StockJdbcBatchService stockJdbcBatchService;
     private final StockElasticService stockElasticService;
-    private final WebSocketService webSocketService;
     @PostMapping("/data")
     public ResponseEntity<String> loadStock(@RequestBody Map<String, List<StockDto>> stockDataMap) {
 
@@ -33,8 +32,6 @@ public class StockController {
 
         log.info("Stock Data Process");
         stockService.batchInsertOrUpdate(stockDataMap);
-
-        webSocketService.broadcastData("mypage", stockDataMap);
 
 
         log.info("Stock Data received successfully");
