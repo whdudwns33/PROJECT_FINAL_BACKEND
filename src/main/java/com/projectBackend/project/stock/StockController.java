@@ -4,6 +4,8 @@ import com.projectBackend.project.stock.elastic.StockElasticService;
 import com.projectBackend.project.stock.jdbc.StockJdbcBatchService;
 import com.projectBackend.project.stock.jpa.StockEntity;
 import com.projectBackend.project.stock.jpa.StockService;
+import com.projectBackend.project.utils.websocket.WebSocketHandler;
+import com.projectBackend.project.utils.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ public class StockController {
     private final StockService stockService;
     private final StockJdbcBatchService stockJdbcBatchService;
     private final StockElasticService stockElasticService;
+    private final WebSocketService webSocketService;
     @PostMapping("/data")
     public ResponseEntity<String> loadStock(@RequestBody Map<String, List<StockDto>> stockDataMap) {
 
@@ -30,6 +33,8 @@ public class StockController {
 
         log.info("Stock Data Process");
         stockService.batchInsertOrUpdate(stockDataMap);
+
+        webSocketService.broadcastStockData("stock", stockDataMap);
 
 
         log.info("Stock Data received successfully");
