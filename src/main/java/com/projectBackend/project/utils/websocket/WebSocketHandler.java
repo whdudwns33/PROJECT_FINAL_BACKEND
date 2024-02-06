@@ -1,5 +1,7 @@
 package com.projectBackend.project.utils.websocket;
 
+import com.projectBackend.project.stock.StockDto;
+import com.projectBackend.project.stock.jpa.StockService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +25,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // Getter for roomMap
     // 방과 세션을 관리하는 Map
     private final Map<String, List<WebSocketSession>> roomMap = new HashMap<>();
-
     // 세션과 방 ID를 매핑하는 Map
     private final Map<WebSocketSession, String> sessionRoomIdMap = new HashMap<>();
 
@@ -68,6 +70,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         createRoom(roomId);
         addSessionToRoom(roomId, session);
+
     }
 
     // 최초 연결 시, room을 생성하고 세션을 등록하는 메서드
@@ -118,13 +121,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
         return null;
     }
 
-    // 세션에서 name 추출
-    private String extractType(WebSocketSession session) {
+    // 세션에서 type 추출
+    public String extractType(WebSocketSession session) {
         String query = session.getUri().getQuery();
         if (query != null) {
-            String type = query.replace("type=", "");
-            return type.isEmpty() ? null : type;
+            String[] params = query.split("&");
+            for (String param : params) {
+                if (param.startsWith("type=")) {
+                    return param.substring("type=".length());
+                }
+            }
         }
         return null;
     }
+
 }

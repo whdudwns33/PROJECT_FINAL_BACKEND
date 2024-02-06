@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projectBackend.project.stock.StockDto;
 import com.projectBackend.project.stock.jpa.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -46,9 +45,7 @@ public class WebSocketService {
 
 
     // 주식 리스트 조회
-    public String broadcastDtoData(String roomId, String type) throws ParseException {
-        List<StockDto> stockDtos = stockService.getStockList(type);
-
+    public String broadcastDtoData(String roomId, List<StockDto> stockDtos) throws ParseException {
         // Dto리스트를 제이슨 문자열화
         String messageJson = convertDtoToJson(stockDtos);
 

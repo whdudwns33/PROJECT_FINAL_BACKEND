@@ -3,6 +3,7 @@ package com.projectBackend.project.stock.schedular;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.projectBackend.project.stock.StockDto;
 import com.projectBackend.project.stock.jpa.RecentStockEntity;
 import com.projectBackend.project.stock.jpa.RecentStockRepository;
 import com.projectBackend.project.stock.jpa.StockService;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -83,5 +85,26 @@ public class StockSchedularService {
 
     }
 
-
+    // 조영준 : 주식 리스트 조회 세션
+    @Scheduled(fixedRate = 1000 * 15)
+    public void brodcastRequestStockList() throws ParseException {
+        for (Map.Entry<String, List<WebSocketSession>> entry : webSocketHandler.getRoomMap().entrySet()) {
+            String roomId = entry.getKey();
+            List<WebSocketSession> roomSessions = entry.getValue();
+            if (roomSessions != null && !roomSessions.isEmpty()) {
+                // 방의 첫 번째 세션을 대표로 사용
+                WebSocketSession representativeSession = roomSessions.get(0);
+                String type = webSocketHandler.extractType(representativeSession);
+                // 매개변수
+                log.info("type : {}", type);
+                log.info("roomSessions의 수 : {}", roomSessions.size());
+                List<StockDto> stockDtoList = stockService.getStockList(type);
+                if (stockDtoList != null) {
+                    webSocketService.broadcastDtoData(roomId, stockDtoList);
+                } else {
+                    log.warn("주식 리스트에 대한 데이터를 찾을 수 없습니다: {}", type);
+                }
+            }
+        }
+    }
 }
