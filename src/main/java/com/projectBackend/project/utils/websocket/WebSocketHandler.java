@@ -94,7 +94,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     // 세션에서 roomId 추출
-    private String extractRoomId(WebSocketSession session) {
+    public String extractRoomId(WebSocketSession session) {
         String query = session.getUri().getQuery();
         if (query != null) {
             String[] params = query.split("&");
@@ -107,19 +107,19 @@ public class WebSocketHandler extends TextWebSocketHandler {
         return null;
     }
 
-    // 세션에서 name 추출
-    public String extractName(WebSocketSession session) {
-        String query = session.getUri().getQuery();
-        if (query != null) {
-            String[] params = query.split("&");
-            for (String param : params) {
-                if (param.startsWith("name=")) {
-                    return param.substring("name=".length());
-                }
-            }
-        }
-        return null;
-    }
+//    // 세션에서 name 추출
+//    public String extractName(WebSocketSession session) {
+//        String query = session.getUri().getQuery();
+//        if (query != null) {
+//            String[] params = query.split("&");
+//            for (String param : params) {
+//                if (param.startsWith("name=")) {
+//                    return param.substring("name=".length());
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
     // 세션에서 type 추출
     public String extractType(WebSocketSession session) {

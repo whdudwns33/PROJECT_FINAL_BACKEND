@@ -52,37 +52,31 @@ public class StockSchedularService {
     public void brodcastRequest() {
         for (Map.Entry<String, List<WebSocketSession>> entry : webSocketHandler.getRoomMap().entrySet()) {
             String roomId = entry.getKey();
-            List<WebSocketSession> roomSessions = entry.getValue();
 
+            // 추가된 조건문
+            if ("stockList".equals(roomId)) {
+                continue;
+            }
+            List<WebSocketSession> roomSessions = entry.getValue();
             if (roomSessions != null && !roomSessions.isEmpty()) {
                 // 방의 첫 번째 세션을 대표로 사용
                 WebSocketSession representativeSession = roomSessions.get(0);
-
-                String name = webSocketHandler.extractName(representativeSession);
+                String name = webSocketHandler.extractRoomId(representativeSession);
                 // 현재 날짜를 가져오는 코드
-
                 LocalDate localDate = LocalDate.now();
-
                 // LocalDate를 Date로 변환
                 Date currentDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-
                 RecentStockEntity latestStock = recentStockRepository.findLatestByName(name, currentDate);
-
                 if (latestStock != null) {
-//                    log.info("{} 주식의 최신 데이터를 방({})에 브로드캐스트합니다: {}", name, roomId, latestStock);
-
                     // RecentStockEntity를 Map<String, List<RecentStockEntity>>으로 감싸기
                     Map<String, List<RecentStockEntity>> data = new HashMap<>();
                     data.put("latestStock", Collections.singletonList(latestStock));
-
                     webSocketService.broadcastData(roomId, data);
                 } else {
                     log.warn("주식에 대한 데이터를 찾을 수 없습니다: {}", name);
                 }
             }
         }
-
     }
 
     // 조영준 : 주식 리스트 조회 세션
@@ -90,19 +84,22 @@ public class StockSchedularService {
     public void brodcastRequestStockList() throws ParseException {
         for (Map.Entry<String, List<WebSocketSession>> entry : webSocketHandler.getRoomMap().entrySet()) {
             String roomId = entry.getKey();
-            List<WebSocketSession> roomSessions = entry.getValue();
-            if (roomSessions != null && !roomSessions.isEmpty()) {
-                // 방의 첫 번째 세션을 대표로 사용
-                WebSocketSession representativeSession = roomSessions.get(0);
-                String type = webSocketHandler.extractType(representativeSession);
-                // 매개변수
-                log.info("type : {}", type);
-                log.info("roomSessions의 수 : {}", roomSessions.size());
-                List<StockDto> stockDtoList = stockService.getStockList(type);
-                if (stockDtoList != null) {
-                    webSocketService.broadcastDtoData(roomId, stockDtoList);
-                } else {
-                    log.warn("주식 리스트에 대한 데이터를 찾을 수 없습니다: {}", type);
+            // 추가된 조건문
+            if ("stockList".equals(roomId)) {
+                List<WebSocketSession> roomSessions = entry.getValue();
+                if (roomSessions != null && !roomSessions.isEmpty()) {
+                    // 방의 첫 번째 세션을 대표로 사용
+                    WebSocketSession representativeSession = roomSessions.get(0);
+                    String type = webSocketHandler.extractType(representativeSession);
+                    // 매개변수
+                    log.info("type : {}", type);
+                    log.info("roomSessions의 수 : {}", roomSessions.size());
+                    List<StockDto> stockDtoList = stockService.getStockList(type);
+                    if (stockDtoList != null) {
+                        webSocketService.broadcastDtoData(roomId, stockDtoList);
+                    } else {
+                        log.warn("주식 리스트에 대한 데이터를 찾을 수 없습니다: {}", type);
+                    }
                 }
             }
         }
