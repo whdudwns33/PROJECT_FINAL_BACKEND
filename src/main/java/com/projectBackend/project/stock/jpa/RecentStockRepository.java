@@ -42,3 +42,4 @@ public interface RecentStockRepository extends JpaRepository<RecentStockEntity, 
     @Query("SELECT e FROM RecentStockEntity e WHERE e.stockDate = :currentDate " +
             "AND e.stockName = :stockName")
     RecentStockEntity findLatestByName(@Param("stockName") String stockName,@Param("currentDate") Date currentDate);}
+

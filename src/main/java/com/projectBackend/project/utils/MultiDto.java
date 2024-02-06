@@ -1,6 +1,7 @@
 package com.projectBackend.project.utils;
 
 import com.projectBackend.project.crawling.crawlAgr.CrawlArgDto;
+import com.projectBackend.project.crawling.crawlDomesticIndicators.CrawlDomesticIndicatorsDto;
 import com.projectBackend.project.crawling.crawlEnergy.CrawlEnergyDto;
 import com.projectBackend.project.crawling.crawlExchange.CrawlExchangeDto;
 import com.projectBackend.project.crawling.crawlGold.CrawlGoldDto;
@@ -50,6 +51,9 @@ public class MultiDto {
     private CrawlGoldDto crawlGoldDto;
     private List<CrawlGoldDto> crawlGoldDtoList;
 
+    // 인덱스
+    private CrawlDomesticIndicatorsDto crawlDomesticIndicatorsDto;
+    private List<CrawlDomesticIndicatorsDto> crawlDomesticIndicatorsDtoList;
 
 
 }

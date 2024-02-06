@@ -80,7 +80,9 @@ public class StockSchedularService {
     }
 
     // 조영준 : 주식 리스트 조회 세션
-    @Scheduled(fixedRate = 1000 * 15)
+    // 임시 10초
+    // 1시간 정도로 생각
+    @Scheduled(fixedRate = 1000 * 10 )
     public void brodcastRequestStockList() throws ParseException {
         for (Map.Entry<String, List<WebSocketSession>> entry : webSocketHandler.getRoomMap().entrySet()) {
             String roomId = entry.getKey();

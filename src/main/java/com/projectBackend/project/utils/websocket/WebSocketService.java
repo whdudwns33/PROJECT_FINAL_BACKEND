@@ -43,14 +43,14 @@ public class WebSocketService {
         }
     }
 
-
     // 주식 리스트 조회
+    private int num = 0;
     public String broadcastDtoData(String roomId, List<StockDto> stockDtos) throws ParseException {
         // Dto리스트를 제이슨 문자열화
         String messageJson = convertDtoToJson(stockDtos);
 
         WebSocketMessageDto messageDto = WebSocketMessageDto.builder()
-                .type("STOCK_DATA")
+                .type(String.valueOf(num))
                 .message(messageJson)
                 .build();
 
@@ -60,6 +60,7 @@ public class WebSocketService {
         if (roomSessions != null) {
             for (WebSocketSession session : roomSessions) {
                 sendMessage(session, convertMessageDtoToJson(messageDto));
+                num ++;
             }
         }
         return convertMessageDtoToJson(messageDto);

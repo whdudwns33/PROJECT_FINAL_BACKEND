@@ -45,6 +45,7 @@ public class CommonService {
             multiDto.setCrawlMarketDtoList(crawlMarketService.getCrawlMarketList());
             multiDto.setCrawlGoldDtoList(crawlGoldService.getCrawlGoldList());
             multiDto.setCrawlExchangeDtoList(crawlExchangeService.getCrawlExchangeList());
+
             return multiDto;
         }
        catch (Exception e) {
