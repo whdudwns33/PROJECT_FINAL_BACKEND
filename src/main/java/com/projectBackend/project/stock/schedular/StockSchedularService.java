@@ -37,7 +37,7 @@ public class StockSchedularService {
 //    @Value("${flask.data.path}")
 //    private String flaskDataPath;
 
-    @Scheduled(fixedRate = 1000 * 60 * 2)
+    @Scheduled(fixedRate = 1000 * 60 * 1)
     public void pullRequest() throws JsonProcessingException {
         // Flask 애플리케이션의 stock 엔드포인트에 새로운 데이터를 달라고 요청 보내기
         String url = "http://localhost:5000/python/stock/pull";
@@ -48,7 +48,7 @@ public class StockSchedularService {
         log.info("Stock data received from Flask: {}", stockData);
     }
 
-    @Scheduled(fixedRate = 1000 * 15)
+    @Scheduled(fixedRate = 1000 * 10)
     public void brodcastRequest() {
         for (Map.Entry<String, List<WebSocketSession>> entry : webSocketHandler.getRoomMap().entrySet()) {
             String roomId = entry.getKey();
@@ -82,7 +82,7 @@ public class StockSchedularService {
     // 조영준 : 주식 리스트 조회 세션
     // 임시 10초
     // 1시간 정도로 생각
-    @Scheduled(fixedRate = 1000 * 10 )
+    @Scheduled(fixedRate = 1000 * 10)
     public void brodcastRequestStockList() throws ParseException {
         for (Map.Entry<String, List<WebSocketSession>> entry : webSocketHandler.getRoomMap().entrySet()) {
             String roomId = entry.getKey();
