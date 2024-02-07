@@ -8,6 +8,7 @@ import com.projectBackend.project.crawling.crawlGold.CrawlGoldDto;
 import com.projectBackend.project.crawling.crawlMarket.CrawlMarketDto;
 import com.projectBackend.project.crawling.crawlMetal.CrawlMetalDto;
 import com.projectBackend.project.crawling.crawlOil.CrawlOilDto;
+import com.projectBackend.project.crawling.crawlSearch.CrawlSearchDto;
 import com.projectBackend.project.crawling.crawlStock.CrawlStockDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,5 +56,8 @@ public class MultiDto {
     private CrawlDomesticIndicatorsDto crawlDomesticIndicatorsDto;
     private List<CrawlDomesticIndicatorsDto> crawlDomesticIndicatorsDtoList;
 
+    // 검색 상위
+    private CrawlSearchDto crawlSearchDto;
+    private List<CrawlSearchDto> crawlSearchDtos;
 
 }

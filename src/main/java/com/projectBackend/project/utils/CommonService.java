@@ -1,6 +1,7 @@
 package com.projectBackend.project.utils;
 
 import com.projectBackend.project.crawling.crawlAgr.CrawlArgService;
+import com.projectBackend.project.crawling.crawlDomesticIndicators.CrawlDomesticIndicatorsService;
 import com.projectBackend.project.crawling.crawlEnergy.CrawlEnergyService;
 import com.projectBackend.project.crawling.crawlExchange.CrawlExchangeService;
 import com.projectBackend.project.crawling.crawlGold.CrawlGoldService;
@@ -8,6 +9,7 @@ import com.projectBackend.project.crawling.crawlMarket.CrawlMarketService;
 import com.projectBackend.project.crawling.crawlMetal.CrawlMetalService;
 import com.projectBackend.project.crawling.crawlOil.CrawlOilService;
 import com.projectBackend.project.crawling.crawlRate.CrawlRateService;
+import com.projectBackend.project.crawling.crawlSearch.CrawlSearchService;
 import com.projectBackend.project.crawling.crawlStock.CrawlStockService;
 import com.projectBackend.project.stock.StockDto;
 import com.projectBackend.project.utils.websocket.WebSocketHandler;
@@ -32,19 +34,32 @@ public class CommonService {
     private final CrawlMetalService crawlMetalService;
     private final CrawlMarketService crawlMarketService;
     private final CrawlGoldService crawlGoldService;
-
+    private final CrawlSearchService crawlSearchService;
+    private final CrawlDomesticIndicatorsService crawlDomesticIndicatorsService;
 
     public MultiDto getIndex() {
         try {
             MultiDto multiDto = new MultiDto();
+            // 농업
             multiDto.setCrawlArgDtoList(crawlArgService.getCrawlArgs());
+            // 에너지
             multiDto.setCrawlEnergyDtoList(crawlEnergyService.getCrawlEnergyList());
+            // 거래 상위
             multiDto.setCrawlStockDtoList(crawlStockService.getCrawlStockList());
+            // 유가
             multiDto.setCrawlOilDtoList(crawlOilService.getCrawlOilList());
+            // 철강
             multiDto.setCrawlMetalDtoList(crawlMetalService.getCrawlMetalList());
+            // 시장 환율
             multiDto.setCrawlMarketDtoList(crawlMarketService.getCrawlMarketList());
+            // 금시세
             multiDto.setCrawlGoldDtoList(crawlGoldService.getCrawlGoldList());
+            // 환율
             multiDto.setCrawlExchangeDtoList(crawlExchangeService.getCrawlExchangeList());
+            // 검색 상위
+            multiDto.setCrawlSearchDtos(crawlSearchService.getCrawlSearchList());
+            // 코스닥
+            multiDto.setCrawlDomesticIndicatorsDtoList(crawlDomesticIndicatorsService.getCrawlDomesticIndicatorsList());
 
             return multiDto;
         }

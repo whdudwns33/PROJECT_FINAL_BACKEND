@@ -4,27 +4,26 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Setter
 @Getter
-@ToString
+@Setter
+@NoArgsConstructor  // 기본 생성자 추가
 @Entity
-@Table(name = "crawlDomesticIndicators")
-@NoArgsConstructor
+@Table(name = "crawl_domestic_indicators")
 public class CrawlDomesticIndicatorsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String CrawlDomesticIndicatorsName;
-    private String CrawlDomesticIndicatorsPrice;
-    private String CrawlDomesticIndicatorsChange;
+    private String crawlDomesticIndicatorsName;
+    private String crawlDomesticIndicatorsPrice;
+    private String crawlDomesticIndicatorsChange;
 
     @Builder
-    public CrawlDomesticIndicatorsEntity(Long id, String CrawlDomesticIndicatorsName, String CrawlDomesticIndicatorsPrice,
-                                         String CrawlDomesticIndicatorsChange) {
+    public CrawlDomesticIndicatorsEntity(Long id, String crawlDomesticIndicatorsName, String crawlDomesticIndicatorsPrice,
+                                         String crawlDomesticIndicatorsChange) {
         this.id = id;
-        this.CrawlDomesticIndicatorsName = CrawlDomesticIndicatorsName;
-        this.CrawlDomesticIndicatorsPrice = CrawlDomesticIndicatorsPrice;
-        this.CrawlDomesticIndicatorsChange = CrawlDomesticIndicatorsChange;
+        this.crawlDomesticIndicatorsName = crawlDomesticIndicatorsName;
+        this.crawlDomesticIndicatorsPrice = crawlDomesticIndicatorsPrice;
+        this.crawlDomesticIndicatorsChange = crawlDomesticIndicatorsChange;
     }
 }
