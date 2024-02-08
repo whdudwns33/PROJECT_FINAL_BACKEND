@@ -29,7 +29,10 @@ public class BuyService {
     public MultiDto getData(MultiDto multiDto) {
         MultiDto newDto = new MultiDto();
         String email = commonService.returnEmail(multiDto);
+        log.info("email : {}", email);
         String name = multiDto.getStockDto().getStockName();
+        log.info("name : {}", name);
+
         Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
         if(memberEntityOptional.isPresent()) {
             MemberEntity memberEntity = memberEntityOptional.get();
@@ -46,11 +49,12 @@ public class BuyService {
             // 기격이나 구매수량은 구매 리스트에 담는다.
             if(buyEntityList != null) {
                 for(BuyEntity buyEntity : buyEntityList) {
+                    log.info("buyEntity : {}", buyEntity);
                     StockDto stockDto = new StockDto();
                     BuyDto buyDto = new BuyDto();
                     stockDto.setStockName(buyEntity.getName());
                     buyDto.setBuyCount(buyEntity.getBuyCount());
-                    buyDto.setBuyCount(buyEntity.getBuyPrice());
+                    buyDto.setBuyPrice(buyEntity.getBuyPrice());
                     stockDtoList.add(stockDto);
                     buyDtoList.add(buyDto);
                 }
@@ -69,11 +73,7 @@ public class BuyService {
         }
     }
 
-
-
-
-
-    // 구매
+    // 구매(매수)
     @Transactional
     public boolean buy(MultiDto multiDto) {
         // 이메일 값으로 멤버 조회
@@ -118,6 +118,49 @@ public class BuyService {
         }
     }
 
+    // 판매(매도)
+    public boolean sell(MultiDto multiDto) {
+        // 이메일 값으로 멤버 조회
+        String email = commonService.returnEmail(multiDto);
+        log.info("email : {}", email);
+        String name = multiDto.getStockDto().getStockName();
+        log.info("name : {}", name);
+        // 총 수량
+        int sellCount = multiDto.getBuyDto().sellCount;
+        log.info("sellCount : {}", sellCount);
+        int sellPrice = multiDto.getBuyDto().sellPrice;
+        log.info("sellPrice : {}", sellPrice);
 
+        Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
+        if (memberEntityOptional.isPresent()) {
+            MemberEntity memberEntity = memberEntityOptional.get();
+            Long id = memberEntity.getId();
+            // 데이터베이스의 데이터 조회
+            List<BuyEntity> buyEntityList = buyRepository.findByMemberIdAndName(id, name);
 
+            log.info("buyEntityList : {}", buyEntityList);
+            if (buyEntityList != null) {
+                for (BuyEntity buyEntity : buyEntityList) {
+                    if(sellCount > 0) {
+                        int count = buyEntity.getBuyCount();
+
+                        if (count >= sellCount) {
+                            buyEntity.setBuyCount(count - sellCount);
+                            buyRepository.save(buyEntity);
+                            break;
+                        } else {
+                            buyEntity.setBuyCount(0);
+                            sellCount -= count;
+                            buyRepository.save(buyEntity);
+                        }
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 }

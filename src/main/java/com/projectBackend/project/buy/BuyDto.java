@@ -10,4 +10,8 @@ public class BuyDto {
     int buyPrice;
     // 구매 수량
     int buyCount;
+    // 총 수량
+    int sellCount;
+    // 총 매도 가격
+    int sellPrice;
 }

@@ -25,4 +25,11 @@ public class BuyContoroller {
     public ResponseEntity<Boolean> postBuy(@RequestBody MultiDto multiDto) {
         return ResponseEntity.ok(buyService.buy(multiDto));
     }
+
+
+    // 판매
+    @PostMapping("/sell")
+    public ResponseEntity<Boolean> postSell(@RequestBody MultiDto multiDto) {
+        return ResponseEntity.ok(buyService.sell(multiDto));
+    }
 }
