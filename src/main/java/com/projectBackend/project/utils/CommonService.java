@@ -12,6 +12,7 @@ import com.projectBackend.project.crawling.crawlRate.CrawlRateService;
 import com.projectBackend.project.crawling.crawlSearch.CrawlSearchService;
 import com.projectBackend.project.crawling.crawlStock.CrawlStockService;
 import com.projectBackend.project.stock.StockDto;
+import com.projectBackend.project.utils.jwt.TokenProvider;
 import com.projectBackend.project.utils.websocket.WebSocketHandler;
 import com.projectBackend.project.utils.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,12 @@ public class CommonService {
     private final CrawlGoldService crawlGoldService;
     private final CrawlSearchService crawlSearchService;
     private final CrawlDomesticIndicatorsService crawlDomesticIndicatorsService;
+    private final TokenProvider tokenProvider;
+
+    // 회원의 엑세스 토큰에서 이메일값 파싱
+    public String returnEmail(MultiDto multiDto) {
+        return tokenProvider.getUserEmail(multiDto.getAccessToken());
+    }
 
     public MultiDto getIndex() {
         try {

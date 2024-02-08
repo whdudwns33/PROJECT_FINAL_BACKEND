@@ -4,6 +4,7 @@ import com.projectBackend.project.member.MemberEntity;
 import com.projectBackend.project.member.MemberRepository;
 import com.projectBackend.project.stock.StockDto;
 import com.projectBackend.project.stock.jpa.RecentStockEntity;
+import com.projectBackend.project.utils.CommonService;
 import com.projectBackend.project.utils.MultiDto;
 import com.projectBackend.project.utils.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,14 +22,62 @@ import java.util.Optional;
 public class BuyService {
 
     private final BuyRepository buyRepository;
-    private final TokenProvider tokenProvider;
+    private final CommonService commonService;
     private final MemberRepository memberRepository;
 
+    // 회원 조회 및 구매 이력 조회
+    public MultiDto getData(MultiDto multiDto) {
+        MultiDto newDto = new MultiDto();
+        String email = commonService.returnEmail(multiDto);
+        String name = multiDto.getStockDto().getStockName();
+        Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
+        if(memberEntityOptional.isPresent()) {
+            MemberEntity memberEntity = memberEntityOptional.get();
+            Long id = memberEntity.getId();
+            List<BuyEntity> buyEntityList = buyRepository.findByMemberIdAndStockContent(id, name);
+            log.info("buyEntityList : {}", buyEntityList);
+
+            // 주식 리스트
+            List<StockDto> stockDtoList = new ArrayList<>();
+            // 구매 리스트
+            List<BuyDto> buyDtoList = new ArrayList<>();
+
+            // 구매 이력에서 주식이름은 주식 리스트에 담고,
+            // 기격이나 구매수량은 구매 리스트에 담는다.
+            if(buyEntityList != null) {
+                for(BuyEntity buyEntity : buyEntityList) {
+                    StockDto stockDto = new StockDto();
+                    BuyDto buyDto = new BuyDto();
+                    stockDto.setStockName(buyEntity.getName());
+                    buyDto.setBuyCount(buyEntity.getBuyCount());
+                    buyDto.setBuyCount(buyEntity.getBuyPrice());
+                    stockDtoList.add(stockDto);
+                    buyDtoList.add(buyDto);
+                }
+                newDto.setBuyDtoList(buyDtoList);
+                newDto.setStockDtoList(stockDtoList);
+                return newDto;
+            }
+            else {
+                log.info("구매 내역이 없음");
+                return null;
+            }
+        }
+        else {
+            log.info("memberEntityOptional 없습니다.");
+            return null;
+        }
+    }
+
+
+
+
+
+    // 구매
     @Transactional
     public boolean buy(MultiDto multiDto) {
         // 이메일 값으로 멤버 조회
-        String accessToken = multiDto.getAccessToken();
-        String email = tokenProvider.getUserEmail(accessToken);
+        String email = commonService.returnEmail(multiDto);
         String name = multiDto.getStockDto().getStockName();
 
         // 회원 조회
@@ -66,4 +117,7 @@ public class BuyService {
             return false;
         }
     }
+
+
+
 }
