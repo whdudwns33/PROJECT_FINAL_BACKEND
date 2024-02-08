@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface BuyRepository extends JpaRepository<BuyEntity, Long> {
-    List<BuyEntity> findByMemberIdAndStockContent(Long memberId, String stockContent);
+    List<BuyEntity> findByMemberIdAndName(Long memberId, String Name);
 
 
 }

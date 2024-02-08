@@ -34,7 +34,7 @@ public class BuyService {
         if(memberEntityOptional.isPresent()) {
             MemberEntity memberEntity = memberEntityOptional.get();
             Long id = memberEntity.getId();
-            List<BuyEntity> buyEntityList = buyRepository.findByMemberIdAndStockContent(id, name);
+            List<BuyEntity> buyEntityList = buyRepository.findByMemberIdAndName(id, name);
             log.info("buyEntityList : {}", buyEntityList);
 
             // 주식 리스트
