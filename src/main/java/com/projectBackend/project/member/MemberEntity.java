@@ -24,6 +24,7 @@ public class MemberEntity {
     String memberPassword;
     String phone;
     String memberNickName;
+    int point;
     Date birth;
     @Enumerated(EnumType.STRING)
     private Authority authority;
@@ -31,14 +32,17 @@ public class MemberEntity {
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
+
+
     @Builder
-    public MemberEntity(String memberEmail, String memberPassword, String phone, String nickName, Date birth, Authority authority) {
+    public MemberEntity(String memberEmail, String memberPassword, String phone, String nickName, Date birth, Authority authority, int point) {
         this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
         this.phone = phone;
         this.memberNickName = nickName;
         this.birth = birth;
         this.authority = authority;
+        this.point = point;
         this.registrationDate = LocalDateTime.now(); // 현재 날짜와 시간을 얻음
     }
 }

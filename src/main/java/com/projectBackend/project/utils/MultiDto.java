@@ -1,5 +1,6 @@
 package com.projectBackend.project.utils;
 
+import com.projectBackend.project.buy.BuyDto;
 import com.projectBackend.project.crawling.crawlAgr.CrawlArgDto;
 import com.projectBackend.project.crawling.crawlDomesticIndicators.CrawlDomesticIndicatorsDto;
 import com.projectBackend.project.crawling.crawlEnergy.CrawlEnergyDto;
@@ -10,6 +11,8 @@ import com.projectBackend.project.crawling.crawlMetal.CrawlMetalDto;
 import com.projectBackend.project.crawling.crawlOil.CrawlOilDto;
 import com.projectBackend.project.crawling.crawlSearch.CrawlSearchDto;
 import com.projectBackend.project.crawling.crawlStock.CrawlStockDto;
+import com.projectBackend.project.member.MemberDto;
+import com.projectBackend.project.stock.StockDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +23,13 @@ import java.util.List;
 @Getter
 @Setter
 public class MultiDto {
+    // 회원 정보
+    private MemberDto memberDto;
+    private List<MemberDto> memberDtoList;
+
+    // 토큰
+    private String accessToken;
+
     // 국제 에너지 가격
     private CrawlEnergyDto crawlEnergyDto;
     private List<CrawlEnergyDto> crawlEnergyDtoList;
@@ -59,5 +69,13 @@ public class MultiDto {
     // 검색 상위
     private CrawlSearchDto crawlSearchDto;
     private List<CrawlSearchDto> crawlSearchDtos;
+
+    // 주식 정보
+    private StockDto stockDto;
+    private List<StockDto> stockDtoList;
+
+    // 구매 정보
+    private BuyDto buyDto;
+    private List<BuyDto> buyDtoList;
 
 }

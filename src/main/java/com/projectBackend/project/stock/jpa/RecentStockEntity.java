@@ -16,6 +16,7 @@ import java.util.Date;
 public class RecentStockEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "recentStock_id")
     private Long recentStockId;
 
     @Temporal(TemporalType.DATE)
