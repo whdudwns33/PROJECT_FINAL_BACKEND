@@ -28,11 +28,6 @@ public class CommunityController {
         return ResponseEntity.ok(communityService.savePost(multiDto));
     }
 
-//    @PostMapping("/getInfo")
-//    public ResponseEntity<MultiDto> getInfo(@RequestBody MultiDto multiDto) {
-//        return ResponseEntity.ok(buyService.getData(multiDto));
-//    }
-
 //    // 전체 불러오기
 //    @GetMapping("/list")
 //    public ResponseEntity<Page<CommunityDto>> discussionList(Pageable pageable) {
