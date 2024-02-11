@@ -33,7 +33,7 @@ public class CommunityController {
         return ResponseEntity.ok(communityService.getAllPosts(pageable));
     }
 
-    // 조회
+    // 조회수
     @PostMapping("/view/{id}")
     public ResponseEntity<Boolean> discussionView(@PathVariable Long id) {
         return ResponseEntity.ok(communityService.incrementViews(id));

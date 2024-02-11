@@ -1,5 +1,6 @@
 package com.projectBackend.project.community;
 
+import com.projectBackend.project.utils.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,9 +16,11 @@ import java.util.Optional;
 @Transactional
 public class CommunityService {
     private final CommunityRepository communityRepository;
+//    private final AuthService authService;
 
     public CommunityDto savePost(CommunityDto communityDto) {
         CommunityEntity communityEntity = communityDto.toEntity();
+//        authService.isLogined()
         return CommunityDto.of(communityRepository.save(communityEntity));
     }
 
