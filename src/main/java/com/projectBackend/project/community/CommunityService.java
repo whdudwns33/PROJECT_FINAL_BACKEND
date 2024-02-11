@@ -1,5 +1,7 @@
 package com.projectBackend.project.community;
 
+import com.projectBackend.project.utils.CommonService;
+import com.projectBackend.project.utils.MultiDto;
 import com.projectBackend.project.utils.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,18 +18,22 @@ import java.util.Optional;
 @Transactional
 public class CommunityService {
     private final CommunityRepository communityRepository;
-//    private final AuthService authService;
+    private final CommonService commonService;
 
-    public CommunityDto savePost(CommunityDto communityDto) {
+    public CommunityDto savePost(MultiDto multiDto) {
+        CommunityDto communityDto = multiDto.getCommunityDto();
+        String email = commonService.returnEmail(multiDto);
+        log.info("email : {}", email);
+        communityDto.setAuthorId(email);
+
         CommunityEntity communityEntity = communityDto.toEntity();
-//        authService.isLogined()
         return CommunityDto.of(communityRepository.save(communityEntity));
     }
 
-    public Page<CommunityDto> getAllPosts(Pageable pageable) {
-        Page<CommunityEntity> communityPage = communityRepository.findAll(pageable);
-        return communityPage.map(CommunityDto::of);
-    }
+//    public Page<CommunityDto> getAllPosts(Pageable pageable) {
+//        Page<CommunityEntity> communityPage = communityRepository.findAll(pageable);
+//        return communityPage.map(CommunityDto::of);
+//    }
 
     public boolean incrementViews(Long id) {
         Optional<CommunityEntity> optionalCommunityEntity = communityRepository.findById(id);

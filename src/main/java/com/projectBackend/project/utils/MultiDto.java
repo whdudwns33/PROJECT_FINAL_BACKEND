@@ -1,6 +1,7 @@
 package com.projectBackend.project.utils;
 
 import com.projectBackend.project.buy.BuyDto;
+import com.projectBackend.project.community.CommunityDto;
 import com.projectBackend.project.crawling.crawlAgr.CrawlArgDto;
 import com.projectBackend.project.crawling.crawlDomesticIndicators.CrawlDomesticIndicatorsDto;
 import com.projectBackend.project.crawling.crawlEnergy.CrawlEnergyDto;
@@ -77,5 +78,9 @@ public class MultiDto {
     // 구매 정보
     private BuyDto buyDto;
     private List<BuyDto> buyDtoList;
+
+    // 종목 토론 정보
+    private CommunityDto communityDto;
+    private List<CommunityDto> communityDtoList;
 
 }

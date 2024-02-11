@@ -1,5 +1,6 @@
 package com.projectBackend.project.community;
 
+import com.projectBackend.project.utils.MultiDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -23,15 +24,20 @@ public class CommunityController {
 
     // 글 등록
     @PostMapping("/new")
-    public ResponseEntity<CommunityDto> discussionPost(@RequestBody CommunityDto communityDto) {
-        return ResponseEntity.ok(communityService.savePost(communityDto));
+    public ResponseEntity<CommunityDto> discussionPost(@RequestBody MultiDto multiDto) {
+        return ResponseEntity.ok(communityService.savePost(multiDto));
     }
 
-    // 전체 불러오기
-    @GetMapping("/list")
-    public ResponseEntity<Page<CommunityDto>> discussionList(Pageable pageable) {
-        return ResponseEntity.ok(communityService.getAllPosts(pageable));
-    }
+//    @PostMapping("/getInfo")
+//    public ResponseEntity<MultiDto> getInfo(@RequestBody MultiDto multiDto) {
+//        return ResponseEntity.ok(buyService.getData(multiDto));
+//    }
+
+//    // 전체 불러오기
+//    @GetMapping("/list")
+//    public ResponseEntity<Page<CommunityDto>> discussionList(Pageable pageable) {
+//        return ResponseEntity.ok(communityService.getAllPosts(pageable));
+//    }
 
     // 조회수
     @PostMapping("/view/{id}")
