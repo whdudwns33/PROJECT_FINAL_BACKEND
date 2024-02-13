@@ -12,6 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +28,11 @@ public class BuyService {
     private final BuyRepository buyRepository;
     private final CommonService commonService;
     private final MemberRepository memberRepository;
+
+    // 현재 시간 및 요일 확인
+    ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+    LocalTime startTime = LocalTime.of(9, 0);  // 09:00
+    LocalTime endTime = LocalTime.of(15, 30);  // 15:30
 
     // 회원 조회 및 구매 이력 조회
     public MultiDto getData(MultiDto multiDto) {
@@ -76,91 +85,107 @@ public class BuyService {
     // 구매(매수)
     @Transactional
     public boolean buy(MultiDto multiDto) {
-        // 이메일 값으로 멤버 조회
-        String email = commonService.returnEmail(multiDto);
-        String name = multiDto.getStockDto().getStockName();
+        // 주식 판매 가능한지 여부 확인
+        if (isStockPurchaseAllowed(now, startTime, endTime)) {
+            // 이메일 값으로 멤버 조회
+            String email = commonService.returnEmail(multiDto);
+            String name = multiDto.getStockDto().getStockName();
 
-        // 회원 조회
-        Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
-        if (memberEntityOptional.isPresent()) {
-            MemberEntity memberEntity = memberEntityOptional.get();
+            // 회원 조회
+            Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
+            if (memberEntityOptional.isPresent()) {
+                MemberEntity memberEntity = memberEntityOptional.get();
 
-            // 구매한 가격, 갯수 전달
-            BuyDto buyDto = multiDto.getBuyDto();
-            int buyPrice = buyDto.getBuyPrice();
-            int buyCount = buyDto.getBuyCount();
-            int totalCost = buyPrice * buyCount;
+                // 구매한 가격, 갯수 전달
+                BuyDto buyDto = multiDto.getBuyDto();
+                int buyPrice = buyDto.getBuyPrice();
+                int buyCount = buyDto.getBuyCount();
+                int totalCost = buyPrice * buyCount;
 
-            if (memberEntity.getPoint() >= totalCost) {
-                // 충분한 포인트가 있을 경우 구매 처리
-                memberEntity.setPoint(memberEntity.getPoint() - totalCost);
-                memberRepository.save(memberEntity);
+                if (memberEntity.getPoint() >= totalCost) {
+                    // 충분한 포인트가 있을 경우 구매 처리
+                    memberEntity.setPoint(memberEntity.getPoint() - totalCost);
+                    memberRepository.save(memberEntity);
 
-                // 새로운 구매 기록 생성
-                BuyEntity buyEntity = new BuyEntity();
-                buyEntity.setBuyCount(buyCount);
-                buyEntity.setBuyPrice(buyPrice);
-                buyEntity.setName(name);
-                buyEntity.setMember(memberEntity);
+                    // 새로운 구매 기록 생성
+                    BuyEntity buyEntity = new BuyEntity();
+                    buyEntity.setBuyCount(buyCount);
+                    buyEntity.setBuyPrice(buyPrice);
+                    buyEntity.setName(name);
+                    buyEntity.setMember(memberEntity);
 
-                buyRepository.save(buyEntity);
+                    buyRepository.save(buyEntity);
 
-                return true;
+                    return true;
+                } else {
+                    log.warn("포인트가 부족합니다.: {}", email);
+
+                    return false;
+                }
             } else {
-                log.warn("포인트가 부족합니다.: {}", email);
-
+                // 사용자를 찾을 수 없음
+                log.warn("Member not found for email: {}", email);
                 return false;
             }
-        } else {
-            // 사용자를 찾을 수 없음
-            log.warn("Member not found for email: {}", email);
+        }else {
+            log.info("주식 판매 가능한 시간이 아니거나 주말입니다.");
             return false;
         }
     }
 
     // 판매(매도)
     public boolean sell(MultiDto multiDto) {
-        // 이메일 값으로 멤버 조회
-        String email = commonService.returnEmail(multiDto);
-        log.info("email : {}", email);
-        String name = multiDto.getStockDto().getStockName();
-        log.info("name : {}", name);
-        // 총 수량
-        int sellCount = multiDto.getBuyDto().sellCount;
-        log.info("sellCount : {}", sellCount);
-        int sellPrice = multiDto.getBuyDto().sellPrice;
-        log.info("sellPrice : {}", sellPrice);
+        // 주식 판매 가능한지 여부 확인
+        if (isStockPurchaseAllowed(now, startTime, endTime)) {
+            // 이메일 값으로 멤버 조회
+            String email = commonService.returnEmail(multiDto);
+            log.info("email : {}", email);
+            String name = multiDto.getStockDto().getStockName();
+            log.info("name : {}", name);
+            // 총 수량
+            int sellCount = multiDto.getBuyDto().sellCount;
+            log.info("sellCount : {}", sellCount);
+            int sellPrice = multiDto.getBuyDto().sellPrice;
+            log.info("sellPrice : {}", sellPrice);
 
-        Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
-        if (memberEntityOptional.isPresent()) {
-            MemberEntity memberEntity = memberEntityOptional.get();
-            Long id = memberEntity.getId();
-            // 데이터베이스의 데이터 조회
-            List<BuyEntity> buyEntityList = buyRepository.findByMemberIdAndName(id, name);
+            Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
+            if (memberEntityOptional.isPresent()) {
+                MemberEntity memberEntity = memberEntityOptional.get();
+                Long id = memberEntity.getId();
+                // 데이터베이스의 데이터 조회
+                List<BuyEntity> buyEntityList = buyRepository.findByMemberIdAndName(id, name);
 
-            log.info("buyEntityList : {}", buyEntityList);
-            if (buyEntityList != null) {
-                for (BuyEntity buyEntity : buyEntityList) {
-                    if(sellCount > 0) {
-                        int count = buyEntity.getBuyCount();
+                log.info("buyEntityList : {}", buyEntityList);
+                if (!buyEntityList.isEmpty()) {
+                    for (BuyEntity buyEntity : buyEntityList) {
+                        if (sellCount > 0) {
+                            int count = buyEntity.getBuyCount();
 
-                        if (count >= sellCount) {
-                            buyEntity.setBuyCount(count - sellCount);
-                            buyRepository.save(buyEntity);
-                            break;
-                        } else {
-                            buyEntity.setBuyCount(0);
-                            sellCount -= count;
-                            buyRepository.save(buyEntity);
+                            if (count >= sellCount) {
+                                buyEntity.setBuyCount(count - sellCount);
+                                buyRepository.save(buyEntity);
+                                break;
+                            } else {
+                                buyEntity.setBuyCount(0);
+                                sellCount -= count;
+                                buyRepository.save(buyEntity);
+                            }
                         }
                     }
+                    return true;
+                } else {
+                    return false;
                 }
-                return true;
             } else {
                 return false;
             }
         } else {
+            log.info("주식 판매 가능한 시간이 아니거나 주말입니다.");
             return false;
         }
+    }
+
+    private boolean isStockPurchaseAllowed(ZonedDateTime now, LocalTime startTime, LocalTime endTime) {
+        return !(now.toLocalTime().isBefore(startTime) || now.toLocalTime().isAfter(endTime) || now.getDayOfWeek().equals(DayOfWeek.SATURDAY) || now.getDayOfWeek().equals(DayOfWeek.SUNDAY));
     }
 }
