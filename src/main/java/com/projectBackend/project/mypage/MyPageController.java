@@ -26,4 +26,10 @@ public class MyPageController {
     public ResponseEntity<MultiDto> getData(@RequestBody MultiDto multiDto) {
         return ResponseEntity.ok(myPageService.getMemberAndBuy(multiDto));
     }
+
+    // 금액 충전
+    @PostMapping("/savePoint")
+    public ResponseEntity<Boolean> savePoint(@RequestBody MultiDto multiDto) {
+        return ResponseEntity.ok(myPageService.savePointMethod(multiDto));
+    }
 }

@@ -60,4 +60,21 @@ public class MyPageService {
         }
         return null;
     }
+
+    // 포인트 충전
+    public boolean savePointMethod(MultiDto multiDto) {
+        int point = multiDto.getMemberDto().getPoint();
+        String email = tokenProvider.getUserEmail(multiDto.getAccessToken());
+        // 데이터베이스의 회원 정보
+        Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
+        if (memberEntityOptional.isPresent()) {
+            MemberEntity memberEntity = memberEntityOptional.get();
+            int memberPoint = memberEntity.getPoint();
+            memberEntity.setPoint(memberPoint + point);
+            memberRepository.save(memberEntity);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
