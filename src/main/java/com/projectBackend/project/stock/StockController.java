@@ -49,8 +49,8 @@ public class StockController {
         }
     }
 
-//    @GetMapping("/getStock")
-//    public ResponseEntity<StockDto> getStockInfo(@RequestParam String name) {
-//        ResponseEntity.ok()
-//    }
+    @PostMapping("/chart")
+    public ResponseEntity<String> getStockInfo(@RequestBody StockChartReqDto stockChartReqDto) {
+        return ResponseEntity.ok(stockService.getChartData(stockChartReqDto));
+    }
 }

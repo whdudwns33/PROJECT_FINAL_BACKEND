@@ -1,20 +1,26 @@
 package com.projectBackend.project.stock.jpa;
 
+import com.projectBackend.project.stock.StockChartReqDto;
 import com.projectBackend.project.stock.StockDto;
 import com.projectBackend.project.stock.jdbc.StockJdbcBatchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
 import javax.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +33,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class StockService {
     private final StockRepository stockRepository;
+    private final RestTemplate restTemplate;
     private final RecentStockRepository recentStockRepository;
     private final StockJdbcBatchService stockJdbcBatchService;
 
@@ -126,4 +133,62 @@ public class StockService {
 
         return stockDto;
     }
+
+    public String getChartData(StockChartReqDto stockChartReqDto) {
+        log.info("stockName=========================================={}",stockChartReqDto.getStockName());
+        log.info(stockChartReqDto.getColumnType());
+        log.info(String.valueOf(stockChartReqDto.getFutureDays()));
+        log.info(String.valueOf(stockChartReqDto.getMonths()));
+
+        Optional<RecentStockEntity> stockEntityOptional = recentStockRepository.findFirstStockByStockNameOrderByStockDateDesc(stockChartReqDto.getStockName());
+
+        // stockEntityOptional의 값이 존재하면 stockCode를 가져옴, 아니면 null
+        String stockCode = stockEntityOptional.map(RecentStockEntity::getStockCode).orElse(null);
+
+        // stockChartDtd.getMonths() 로 시작일과 종료일 계산
+        int months = stockChartReqDto.getMonths();
+        LocalDate currentDate = LocalDate.now();
+        LocalDate firstDate = currentDate.minusMonths(months);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMM");
+        String endDate = currentDate.format(formatter);
+        String startDate = firstDate.format(formatter);
+        log.info(endDate, startDate);
+
+        String columnType = stockChartReqDto.getColumnType();
+        int futureDays = stockChartReqDto.getFutureDays();
+
+        return sendArimaRequest(stockCode, startDate, endDate, columnType, futureDays);
+    }
+
+    public String sendArimaRequest(String stockCode, String startDate, String endDate, String columnType, int futureDays) {
+        String arimaEndpoint = "http://localhost:5000/python/arima";
+
+        // Set up headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create request body
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("stock_code", stockCode);
+        requestBody.put("start_date", startDate);
+        requestBody.put("end_date", endDate);
+        requestBody.put("column_type", columnType);
+        requestBody.put("future_days", futureDays);
+
+        // Create HttpEntity with headers and body
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        // URL 확인
+        log.info("URL: " + arimaEndpoint);
+
+        // Flask 서버에 POST 요청 보내기
+        ResponseEntity<String> response = restTemplate.postForEntity(arimaEndpoint, requestEntity, String.class);
+
+        // 응답 결과 처리 (예를 들어 로그에 출력)
+        System.out.println("Flask 서버 응답: " + response.getBody());
+        return response.getBody();
+    }
+
+
 }

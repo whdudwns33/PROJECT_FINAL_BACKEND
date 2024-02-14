@@ -11,6 +11,7 @@ import javax.persistence.TemporalType;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface RecentStockRepository extends JpaRepository<RecentStockEntity, Long> {
 
@@ -41,5 +42,8 @@ public interface RecentStockRepository extends JpaRepository<RecentStockEntity, 
     // 최신 주식 데이터
     @Query("SELECT e FROM RecentStockEntity e WHERE e.stockDate = :currentDate " +
             "AND e.stockName = :stockName")
-    RecentStockEntity findLatestByName(@Param("stockName") String stockName,@Param("currentDate") Date currentDate);}
+    RecentStockEntity findLatestByName(@Param("stockName") String stockName,@Param("currentDate") Date currentDate);
+
+    Optional<RecentStockEntity> findFirstStockByStockNameOrderByStockDateDesc(String stockName);
+}
 

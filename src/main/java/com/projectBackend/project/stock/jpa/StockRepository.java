@@ -6,6 +6,5 @@ import java.util.List;
 
 public interface StockRepository extends JpaRepository<StockEntity, Long> {
     List<StockEntity> findByStockNameContainingIgnoreCase(String stockName);
-//    boolean existsByStockDateStartingWith(String yearMonth);
 
 }
