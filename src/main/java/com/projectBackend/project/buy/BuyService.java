@@ -1,21 +1,17 @@
 package com.projectBackend.project.buy;
 
+import com.projectBackend.project.member.MemberDto;
 import com.projectBackend.project.member.MemberEntity;
 import com.projectBackend.project.member.MemberRepository;
 import com.projectBackend.project.stock.StockDto;
-import com.projectBackend.project.stock.jpa.RecentStockEntity;
 import com.projectBackend.project.utils.CommonService;
 import com.projectBackend.project.utils.MultiDto;
-import com.projectBackend.project.utils.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,15 +56,17 @@ public class BuyService {
                 for(BuyEntity buyEntity : buyEntityList) {
                     log.info("buyEntity : {}", buyEntity);
                     StockDto stockDto = new StockDto();
-                    BuyDto buyDto = new BuyDto();
                     stockDto.setStockName(buyEntity.getName());
-                    buyDto.setBuyCount(buyEntity.getBuyCount());
-                    buyDto.setBuyPrice(buyEntity.getBuyPrice());
+                    BuyDto buyDto = BuyDto.builder()
+                            .buyPrice(buyEntity.getBuyPrice())
+                            .buyCount(buyEntity.getBuyCount())
+                            .build();
                     stockDtoList.add(stockDto);
                     buyDtoList.add(buyDto);
                 }
                 newDto.setBuyDtoList(buyDtoList);
                 newDto.setStockDtoList(stockDtoList);
+                newDto.setMemberDto(MemberDto.of(memberEntity));
                 return newDto;
             }
             else {
@@ -90,6 +88,7 @@ public class BuyService {
             // 이메일 값으로 멤버 조회
             String email = commonService.returnEmail(multiDto);
             String name = multiDto.getStockDto().getStockName();
+            String code = multiDto.getStockDto().getStockCode();
 
             // 회원 조회
             Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
@@ -112,7 +111,10 @@ public class BuyService {
                     buyEntity.setBuyCount(buyCount);
                     buyEntity.setBuyPrice(buyPrice);
                     buyEntity.setName(name);
+                    buyEntity.setCode(code);
                     buyEntity.setMember(memberEntity);
+                    // 구매할때, 지금 지금 날짜 저장
+                    buyEntity.setDate(LocalDate.now());
 
                     buyRepository.save(buyEntity);
 
@@ -134,6 +136,7 @@ public class BuyService {
     }
 
     // 판매(매도)
+    @Transactional
     public boolean sell(MultiDto multiDto) {
         // 주식 판매 가능한지 여부 확인
         if (isStockPurchaseAllowed(now, startTime, endTime)) {
@@ -143,22 +146,32 @@ public class BuyService {
             String name = multiDto.getStockDto().getStockName();
             log.info("name : {}", name);
             // 총 수량
-            int sellCount = multiDto.getBuyDto().sellCount;
+            int sellCount = multiDto.getBuyDto().getSellCount();
             log.info("sellCount : {}", sellCount);
-            int sellPrice = multiDto.getBuyDto().sellPrice;
+            int sellPrice = multiDto.getBuyDto().getSellPrice();
             log.info("sellPrice : {}", sellPrice);
-
+            // 구매한 총 수량
+            int totalCount = 0;
+            
             Optional<MemberEntity> memberEntityOptional = memberRepository.findByMemberEmail(email);
             if (memberEntityOptional.isPresent()) {
                 MemberEntity memberEntity = memberEntityOptional.get();
+                int total = memberEntity.getPoint() + sellPrice;
                 Long id = memberEntity.getId();
                 // 데이터베이스의 데이터 조회
                 List<BuyEntity> buyEntityList = buyRepository.findByMemberIdAndName(id, name);
 
                 log.info("buyEntityList : {}", buyEntityList);
                 if (!buyEntityList.isEmpty()) {
+                    // 총 구매 수량 계산
                     for (BuyEntity buyEntity : buyEntityList) {
-                        if (sellCount > 0) {
+                        int buyCount = buyEntity.getBuyCount();
+                        totalCount = totalCount + buyCount;
+                    }
+                    log.info("totalCount : {}", totalCount);
+                    // 매도 매수 수량 비교
+                    for (BuyEntity buyEntity : buyEntityList) {
+                        if (sellCount > 0 && sellCount <= totalCount) {
                             int count = buyEntity.getBuyCount();
 
                             if (count >= sellCount) {
@@ -171,7 +184,13 @@ public class BuyService {
                                 buyRepository.save(buyEntity);
                             }
                         }
+                        else {
+                            return false;
+                        }
                     }
+                    // 최종 가격
+                    memberEntity.setPoint(total);
+                    memberRepository.save(memberEntity);
                     return true;
                 } else {
                     return false;
@@ -185,6 +204,7 @@ public class BuyService {
         }
     }
 
+    // 시간 체크
     private boolean isStockPurchaseAllowed(ZonedDateTime now, LocalTime startTime, LocalTime endTime) {
         return !(now.toLocalTime().isBefore(startTime) || now.toLocalTime().isAfter(endTime) || now.getDayOfWeek().equals(DayOfWeek.SATURDAY) || now.getDayOfWeek().equals(DayOfWeek.SUNDAY));
     }

@@ -20,6 +20,7 @@ public class MemberDto {
     String memberPassword;
     String phone;
     String nickName;
+    int point;
     Date birth;
     @Enumerated(EnumType.STRING)
     private Authority authority;
@@ -35,6 +36,7 @@ public class MemberDto {
                 .nickName(nickName)
                 .birth(birth)
                 .authority(Authority.ROLE_USER)
+                .point(point)
                 .build();
     }
 
@@ -47,6 +49,7 @@ public class MemberDto {
                 .birth(member.getBirth())
                 .authority(member.getAuthority())
                 .registrationDate(member.getRegistrationDate())
+                .point(member.getPoint())
                 .build();
     }
 

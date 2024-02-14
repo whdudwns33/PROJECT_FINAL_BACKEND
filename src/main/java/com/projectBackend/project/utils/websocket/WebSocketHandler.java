@@ -1,17 +1,13 @@
 package com.projectBackend.project.utils.websocket;
 
-import com.projectBackend.project.stock.StockDto;
-import com.projectBackend.project.stock.jpa.StockService;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,13 +21,22 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // Getter for roomMap
     // 방과 세션을 관리하는 Map
     private final Map<String, List<WebSocketSession>> roomMap = new HashMap<>();
+    // 다중 room과 세션 관리
+    private final Map<String, List<WebSocketSession>> roomMaps = new HashMap<>();
     // 세션과 방 ID를 매핑하는 Map
     private final Map<WebSocketSession, String> sessionRoomIdMap = new HashMap<>();
+    // 세션 생성 카운트
+    int sessionCount = 0;
+    // close 카운트
+    int closeCount = 0;
+
 
     // 세션이 연결되면 동작할 메서드
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("WebSocket 연결이 성립되었습니다. 세션 ID: {}", session.getId());
+        log.info("세션이 연결된 횟수: {}", sessionCount);
+        sessionCount++;
         // 최초 연결 시, room을 생성하고 세션을 등록
         createRoomAndAddSession(session);
     }
@@ -40,6 +45,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomId = sessionRoomIdMap.get(session);
+        log.info("세션이 해제된 수 : {}", closeCount);
         if (roomId != null) {
             removeSessionFromRoom(roomId, session);
 
@@ -48,6 +54,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 roomMap.remove(roomId);
             }
         }
+        closeCount++;
     }
 
     // 메시지 수신 시 동작할 메서드
@@ -107,19 +114,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         return null;
     }
 
-//    // 세션에서 name 추출
-//    public String extractName(WebSocketSession session) {
-//        String query = session.getUri().getQuery();
-//        if (query != null) {
-//            String[] params = query.split("&");
-//            for (String param : params) {
-//                if (param.startsWith("name=")) {
-//                    return param.substring("name=".length());
-//                }
-//            }
-//        }
-//        return null;
-//    }
 
     // 세션에서 type 추출
     public String extractType(WebSocketSession session) {
