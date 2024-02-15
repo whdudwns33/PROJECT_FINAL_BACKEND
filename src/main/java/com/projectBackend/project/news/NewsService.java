@@ -1,5 +1,8 @@
 package com.projectBackend.project.news;
 
+import com.projectBackend.project.news.crawling.*;
+import com.projectBackend.project.stock.StockDto;
+import com.projectBackend.project.utils.MultiDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -28,6 +31,9 @@ import java.util.Map;
 public class NewsService {
     private final NewsRepository newsRepository;
     private final RestHighLevelClient elasticsearchClient;
+    private final TvRepository tvRepository;
+    private final RtRepository rtRepository;
+    private final MnRepository mnRepository;
 
     public boolean saveToElastic(List<NewsDto> newsDtos) throws IOException {
         try {
@@ -188,4 +194,57 @@ public class NewsService {
             return null;
         }
     }
+
+    // 뉴스 페이지 크롤링 가져오기
+    public List<List<NewsDto>> getNewsPage() {
+        try {
+            // 데이터 베이스의 값
+            List<TvNewsEntity> tvNewsEntities = tvRepository.findAll();
+            List<MnNewsEntity> mnNewsEntities = mnRepository.findAll();
+            List<RtNewsEntity> rtNewsEntities = rtRepository.findAll();
+
+            // Dto List로 변환
+            List<NewsDto> tvDtos = new ArrayList<>();
+            List<NewsDto> mnDtos = new ArrayList<>();
+            List<NewsDto> rtDtos = new ArrayList<>();
+
+            // TvNewsEntity의 속성값 출력
+            for (TvNewsEntity tvNewsEntity : tvNewsEntities) {
+                NewsDto newsDto = NewsDto.builder()
+                        .thumb(tvNewsEntity.getThumb())
+                        .description(tvNewsEntity.getDescription())
+                        .link(tvNewsEntity.getLink())
+                        .build();
+                tvDtos.add(newsDto);
+            }
+
+            // MnNewsEntity의 속성값 출력
+            for (MnNewsEntity mnNewsEntity : mnNewsEntities) {
+                NewsDto newsDto = NewsDto.builder()
+                        .description(mnNewsEntity.getDescription())
+                        .link(mnNewsEntity.getLink())
+                        .build();
+                mnDtos.add(newsDto);
+            }
+
+            // RtNewsEntity의 속성값 출력
+            for (RtNewsEntity rtNewsEntity : rtNewsEntities) {
+                NewsDto newsDto = NewsDto.builder()
+                        .description(rtNewsEntity.getDescription())
+                        .link(rtNewsEntity.getLink())
+                        .build();
+                rtDtos.add(newsDto);
+            }
+            List<List<NewsDto>> newsDtoListInList = new ArrayList<>();
+            newsDtoListInList.add(tvDtos);
+            newsDtoListInList.add(rtDtos);
+            newsDtoListInList.add(mnDtos);
+            return newsDtoListInList;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

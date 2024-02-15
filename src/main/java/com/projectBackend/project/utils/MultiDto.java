@@ -13,6 +13,7 @@ import com.projectBackend.project.crawling.crawlOil.CrawlOilDto;
 import com.projectBackend.project.crawling.crawlSearch.CrawlSearchDto;
 import com.projectBackend.project.crawling.crawlStock.CrawlStockDto;
 import com.projectBackend.project.member.MemberDto;
+import com.projectBackend.project.news.NewsDto;
 import com.projectBackend.project.stock.StockDto;
 import lombok.Builder;
 import lombok.Getter;

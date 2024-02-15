@@ -1,5 +1,6 @@
 package com.projectBackend.project.news;
 
+import com.projectBackend.project.utils.MultiDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,5 +25,11 @@ public class NewsController {
     @GetMapping("/search")
     public ResponseEntity<List<NewsDto>> searchNews (@RequestParam String token) throws IOException {
         return ResponseEntity.ok(newsService.searchByTokenizer(token));
+    }
+
+    // 뉴스 데이터 가져오기
+    @GetMapping("/getNews")
+    private ResponseEntity<List<List<NewsDto>>> getNews () {
+        return ResponseEntity.ok(newsService.getNewsPage());
     }
 }

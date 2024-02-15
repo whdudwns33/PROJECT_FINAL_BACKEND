@@ -14,8 +14,9 @@ public class NewsDto {
     private String link;
     private String description;
     private String pubDate;
+    private String thumb;
 
-    public static NewsDto of(NewsEntity news) {
+    public NewsDto of(NewsEntity news) {
         return NewsDto.builder()
                 .title(news.getTitle())
                 .originalLink(news.getOriginalLink())
