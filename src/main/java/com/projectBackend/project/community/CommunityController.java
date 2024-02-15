@@ -34,22 +34,22 @@ public class CommunityController {
 //        return ResponseEntity.ok(communityService.getAllPosts(pageable));
 //    }
 
-    // 조회수
-    @PostMapping("/view/{id}")
-    public ResponseEntity<Boolean> discussionView(@PathVariable Long id) {
-        return ResponseEntity.ok(communityService.incrementViews(id));
-    }
+//    // 조회수
+//    @PostMapping("/view/{id}")
+//    public ResponseEntity<Boolean> discussionView(@PathVariable Long id) {
+//        return ResponseEntity.ok(communityService.incrementViews(id));
+//    }
 
     // 추천
     @PostMapping("/like/{id}")
-    public ResponseEntity<Boolean> discussionLike(@PathVariable Long id, @RequestBody String nickname) {
-        return ResponseEntity.ok(communityService.likePost(id, nickname));
+    public ResponseEntity<Boolean> discussionLike(@PathVariable Long id, @RequestBody MultiDto multiDto) {
+        return ResponseEntity.ok(communityService.likePost(id, multiDto));
     }
 
     // 비추천
     @PostMapping("/dislike/{id}")
-    public ResponseEntity<Boolean> discussionDislike(@PathVariable Long id, @RequestBody String nickname) {
-        return ResponseEntity.ok(communityService.dislikePost(id, nickname));
+    public ResponseEntity<Boolean> discussionDislike(@PathVariable Long id, @RequestBody MultiDto multiDto) {
+        return ResponseEntity.ok(communityService.dislikePost(id, multiDto));
     }
 
     // 통합 검색

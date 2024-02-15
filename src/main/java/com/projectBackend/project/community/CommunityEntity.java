@@ -50,10 +50,18 @@ public class CommunityEntity {
 
     // 추가된 메서드
     public void addLike(String nickname) {
-        likes.add(nickname);
+
+//        likes.add(nickname);
+        if (!likes.contains(nickname)) {
+            likes.add(nickname);
+        }
     }
 
     public void addDislike(String nickname) {
-        dislikes.add(nickname);
+
+//        dislikes.add(nickname);
+        if (!dislikes.contains(nickname)) {
+            dislikes.add(nickname);
+        }
     }
 }

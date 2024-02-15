@@ -40,7 +40,8 @@ public class CommunityService {
 
         if (optionalCommunityEntity.isPresent()) {
             CommunityEntity communityEntity = optionalCommunityEntity.get();
-            communityEntity.setViews(communityEntity.getViews() + 1);
+            communityEntity.setViews(communityEntity.getLikes().size() + communityEntity.getDislikes().size());
+//            communityEntity.setViews(communityEntity.getViews() + 1);
             communityRepository.save(communityEntity);
             return true;
         } else {
@@ -48,12 +49,13 @@ public class CommunityService {
         }
     }
 
-    public boolean likePost(Long id, String nickname) {
+    public boolean likePost(Long id, MultiDto multiDto) {
+        String email = commonService.returnEmail(multiDto);
         Optional<CommunityEntity> optionalCommunityEntity = communityRepository.findById(id);
 
         if (optionalCommunityEntity.isPresent()) {
             CommunityEntity communityEntity = optionalCommunityEntity.get();
-            communityEntity.addLike(nickname);
+            communityEntity.addLike(email);
             communityRepository.save(communityEntity);
             return true;
         } else {
@@ -62,12 +64,13 @@ public class CommunityService {
     }
 
 
-    public boolean dislikePost(Long id, String nickname) {
+    public boolean dislikePost(Long id, MultiDto multiDto) {
+        String email = commonService.returnEmail(multiDto);
         Optional<CommunityEntity> optionalCommunityEntity = communityRepository.findById(id);
 
         if (optionalCommunityEntity.isPresent()) {
             CommunityEntity communityEntity = optionalCommunityEntity.get();
-            communityEntity.addDislike(nickname);
+            communityEntity.addDislike(email);
             communityRepository.save(communityEntity);
             return true;
         } else {
