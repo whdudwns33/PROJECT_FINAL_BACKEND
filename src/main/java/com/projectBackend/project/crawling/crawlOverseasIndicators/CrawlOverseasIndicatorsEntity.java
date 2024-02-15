@@ -6,25 +6,25 @@ import javax.persistence.*;
 
 @Setter
 @Getter
+@NoArgsConstructor
 @ToString
 @Entity
 @Table(name = "crawlOverseasIndicators")
-@NoArgsConstructor
 public class CrawlOverseasIndicatorsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String CrawlOverseasIndicatorsName;
-    private String CrawlOverseasIndicatorsPrice;
-    private String CrawlOverseasIndicatorsChange;
+    private String crawlOverseasIndicatorsName;
+    private String crawlOverseasIndicatorsPrice;
+    private String crawlOverseasIndicatorsChange;
 
     @Builder
-    public CrawlOverseasIndicatorsEntity(Long id, String CrawlOverseasIndicatorsName, String CrawlOverseasIndicatorsPrice,
-                                         String CrawlOverseasIndicatorsChange) {
+    public CrawlOverseasIndicatorsEntity(Long id, String crawlOverseasIndicatorsName, String crawlOverseasIndicatorsPrice,
+                                         String crawlOverseasIndicatorsChange) {
         this.id = id;
-        this.CrawlOverseasIndicatorsName = CrawlOverseasIndicatorsName;
-        this.CrawlOverseasIndicatorsPrice = CrawlOverseasIndicatorsPrice;
-        this.CrawlOverseasIndicatorsChange = CrawlOverseasIndicatorsChange;
+        this.crawlOverseasIndicatorsName = crawlOverseasIndicatorsName;
+        this.crawlOverseasIndicatorsPrice = crawlOverseasIndicatorsPrice;
+        this.crawlOverseasIndicatorsChange = crawlOverseasIndicatorsChange;
     }
 }

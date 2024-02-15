@@ -23,7 +23,7 @@ public class CrawlMajorNewsSchedularService {
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void performCrawling() throws JsonProcessingException {
         // Flask 애플리케이션의 rate 엔드포인트에 POST 요청 보내기
-        String url = "http://localhost:5000/python/majorNews";
+        String url = "http://localhost:5000/python/majornews";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String data = response.getBody();
 

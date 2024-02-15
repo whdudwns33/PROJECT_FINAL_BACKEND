@@ -23,7 +23,7 @@ public class CrawlOverseasIndicatorsSchedularService {
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void performCrawling() throws JsonProcessingException {
         // Flask 애플리케이션의 overseasindicators 엔드포인트에 POST 요청 보내기
-        String url = "http://localhost:5000/python/overseasindicators";
+        String url = "http://localhost:5000/python/overseasIndicators";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String data = response.getBody();
 
@@ -36,9 +36,9 @@ public class CrawlOverseasIndicatorsSchedularService {
 
         for (CrawlOverseasIndicatorsDto overseasIndicatorsDto : dataDtoList) {
             CrawlOverseasIndicatorsEntity crawlOverseasIndicatorsEntity = CrawlOverseasIndicatorsEntity.builder()
-                    .CrawlOverseasIndicatorsName(overseasIndicatorsDto.getName())
-                    .CrawlOverseasIndicatorsPrice(overseasIndicatorsDto.getPrice())
-                    .CrawlOverseasIndicatorsChange(overseasIndicatorsDto.getChange())
+                    .crawlOverseasIndicatorsName(overseasIndicatorsDto.getName())
+                    .crawlOverseasIndicatorsPrice(overseasIndicatorsDto.getPrice())
+                    .crawlOverseasIndicatorsChange(overseasIndicatorsDto.getChange())
                     .build();
 
             crawlOverseasIndicatorsRepository.save(crawlOverseasIndicatorsEntity);
