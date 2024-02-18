@@ -1,8 +1,6 @@
-package com.projectBackend.project.news;
+package com.projectBackend.project.news.elastic;
 
 import com.projectBackend.project.news.crawling.*;
-import com.projectBackend.project.stock.StockDto;
-import com.projectBackend.project.utils.MultiDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -102,8 +100,9 @@ public class NewsService {
             // Elasticsearch에 "news_index" 인덱스 생성 요청
             CreateIndexRequest createIndexRequest = new CreateIndexRequest("news_index");
             // "settings" 및 "mappings"를 JSON 형식으로 설정
-            String settingsAndMappings = "{\"settings\": {\"analysis\": {\"tokenizer\": {\"nori_user_dict_tokenizer\": {\"type\": \"nori_tokenizer\",\"decompound_mode\": \"mixed\",\"discard_punctuation\": \"false\"}},\"filter\": {\"korean_stop\": {\"type\": \"stop\",\"stopwords_path\": \"D:/tools/elasticsearch-7.17.12/config/analysis/korean_stopwords.txt\"},\"nori_filter\": {\"type\": \"nori_part_of_speech\",\"stoptags\": [\"E\", \"IC\", \"J\", \"MAG\", \"MAJ\", \"MM\", \"SP\", \"SSC\", \"SSO\", \"SC\", \"SE\", \"XPN\", \"XSA\", \"XSN\", \"XSV\", \"UNA\", \"NA\", \"VSV\", \"NP\"]},\"ngram_filter\": {\"type\": \"ngram\",\"min_gram\": 2,\"max_gram\": 3}},\"analyzer\": {\"nori_analyzer_with_stopwords\": {\"type\": \"custom\",\"tokenizer\": \"nori_user_dict_tokenizer\",\"filter\": [\"nori_readingform\", \"korean_stop\", \"nori_filter\", \"trim\"]},\"nori_ngram_analyzer\": {\"type\": \"custom\",\"tokenizer\": \"nori_user_dict_tokenizer\",\"filter\": [\"nori_readingform\", \"ngram_filter\", \"trim\"]}}}}," +
-                    "\"mappings\": {\"properties\": {\"title\": {\"type\": \"text\",\"analyzer\": \"nori_analyzer_with_stopwords\"},\"description\": {\"type\": \"text\",\"analyzer\": \"nori_analyzer_with_stopwords\"},\"originalLink\": {\"type\": \"keyword\"},\"link\": {\"type\": \"text\"},\"pubDate\": {\"type\": \"date\",\"format\": \"yyyyMMdd\"},\"id\": {\"type\": \"keyword\"}}}}";
+            String settingsAndMappings = "{" +
+                    "\"settings\": {\"analysis\": {\"tokenizer\": {\"nori_user_dict_tokenizer\": {\"type\": \"nori_tokenizer\",\"decompound_mode\": \"mixed\",\"discard_punctuation\": \"false\"}},\"filter\": {\"korean_stop\": {\"type\": \"stop\",\"stopwords_path\": \"C:\\\\tools\\\\elasticsearch-7.17.12\\\\config\\\\analysis\\\\korean_stopwords.txt\"},\"nori_filter\": {\"type\": \"nori_part_of_speech\",\"stoptags\": [\"E\", \"IC\", \"J\", \"MAG\", \"MAJ\", \"MM\", \"SP\", \"SSC\", \"SSO\", \"SC\", \"SE\", \"XPN\", \"XSA\", \"XSN\", \"XSV\", \"UNA\", \"NA\", \"VSV\", \"NP\"]},\"ngram_filter\": {\"type\": \"ngram\",\"min_gram\": 2,\"max_gram\": 3}},\"analyzer\": {\"nori_analyzer_with_stopwords\": {\"type\": \"custom\",\"tokenizer\": \"nori_user_dict_tokenizer\",\"filter\": [\"nori_readingform\", \"korean_stop\", \"nori_filter\", \"trim\"]},\"nori_ngram_analyzer\": {\"type\": \"custom\",\"tokenizer\": \"nori_user_dict_tokenizer\",\"filter\": [\"nori_readingform\", \"ngram_filter\", \"trim\"]}}}}," +
+                    "\"mappings\": {\"properties\": {\"title\": {\"type\": \"text\",\"analyzer\": \"nori_analyzer_with_stopwords\"},\"description\": {\"type\": \"text\",\"analyzer\": \"nori_analyzer_with_stopwords\"},\"originalLink\": {\"type\": \"keyword\"},\"link\": {\"type\": \"text\"},\"pubDate\": {\"type\": \"date\",\"format\": \"yyyyMMdd\"},\"id\": {\"type\": \"keyword\"}}}}}";
             // "settings"와 "mappings"를 설정
             createIndexRequest.source(settingsAndMappings, XContentType.JSON);
             // 인덱스 생성 및 설정 적용

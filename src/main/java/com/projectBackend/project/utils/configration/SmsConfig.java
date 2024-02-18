@@ -1,5 +1,8 @@
 package com.projectBackend.project.utils.configration;
 
+import com.projectBackend.project.member.MemberDto;
+import com.projectBackend.project.member.MemberEntity;
+import com.projectBackend.project.member.MemberRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,12 +14,11 @@ import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static com.projectBackend.project.utils.Common.api;
@@ -30,10 +32,12 @@ import static com.projectBackend.project.utils.Common.secretApi;
 @RequiredArgsConstructor
 public class SmsConfig {
     private final DefaultMessageService messageService;
+    private final MemberRepository memberRepository;
     public String authNum;
 
     @Autowired
-    public SmsConfig() {
+    public SmsConfig(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
         this.messageService = NurigoApp.INSTANCE.initialize(api, secretApi, "https://api.coolsms.co.kr");
     }
 
@@ -75,6 +79,12 @@ public class SmsConfig {
         }
     }
 
+    // 이메일 찾기
+    @PostMapping("/findEmail")
+    public ResponseEntity<List<String>> find(@RequestBody MemberDto memberDto) {
+        return ResponseEntity.ok(getEmailList(memberDto));
+    }
+
     // 인증 번호 생성.
     // 인증 번호 생성 메서드
     // 추가할 것. 유효 시간
@@ -97,5 +107,23 @@ public class SmsConfig {
         System.out.println("문자인증 인증번호 : " + cn);
         // 생성된 인증 번호 반환
         return cn;
+    }
+
+    // 이메일 찾기
+    public List<String> getEmailList (MemberDto memberDto) {
+        String cnum = memberDto.getCnum();
+        String phone = memberDto.getPhone();
+        List<String> emails = new ArrayList<>();
+        if (authNum.equals(cnum)) {
+            List<MemberEntity> memberEntities = memberRepository.findAllByPhone(phone);
+            for (MemberEntity member : memberEntities) {
+                String email = member.getMemberEmail();
+                emails.add(email);
+            }
+            return emails;
+        }
+        else {
+            return null;
+        }
     }
 }

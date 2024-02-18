@@ -17,7 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.util.*;
+
+import static com.projectBackend.project.utils.service.MailService.EPW;
 
 @Slf4j
 @Service
@@ -27,7 +30,6 @@ public class AuthService {
     // 로그인 회원가입 관리
     // member와 밀접한 관계가 있지만, 보안이 필요가 없거나 토큰을 발급 받는 논리 영역
     // 하지만 컨트롤러는 MemberContoroller 등에서 사용할 예정 (authController -> x)
-
     private final AuthenticationManagerBuilder managerBuilder; // 인증을 담당하는 클래스
     private final MemberRepository memberRepository;
     private final TokenRepository tokenRepository;
@@ -134,8 +136,7 @@ public class AuthService {
         }
     }
 
-
-    // 카카오 로그인 => 카카오 토큰이 존재하지만, 사용하지 않을 생각
+    // 카카오 로그인
     public TokenDto kakaoLogin(String email) {
         try {
 
@@ -189,16 +190,21 @@ public class AuthService {
     }
 
     // 카카오 로그인 이후 랜덤 패스워드 생성
+    // 알파벳, 숫자, 특수문자를 모두 포함한 문자열
+    private static final String ALL_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
     public String generateRandomPassword() {
-        UUID uuid = UUID.randomUUID();
+        SecureRandom secureRandom = new SecureRandom();
+        StringBuilder password = new StringBuilder();
+        int length = secureRandom.nextInt(5) + 8;
 
-        // UUID를 문자열로 변환하고 '-' 제거
-        String uuidAsString = uuid.toString().replaceAll("-", "");
+        for (int i = 0; i < length; i++) {
+            // ALL_CHARACTERS에서 랜덤으로 문자 선택
+            int randomIndex = secureRandom.nextInt(ALL_CHARACTERS.length());
+            char randomChar = ALL_CHARACTERS.charAt(randomIndex);
+            password.append(randomChar);
+        }
 
-        // 앞에서부터 10자리만 선택하여 랜덤 비밀번호로 사용
-        String randomPassword = uuidAsString.substring(0, 10);
-
-        return randomPassword;
+        return password.toString();
     }
 
     // 리프레쉬 토큰 반환
@@ -247,5 +253,21 @@ public class AuthService {
     public String createAccessToken(String refreshToken) {
         Authentication authentication = tokenProvider.getAuthentication(refreshToken);
         return tokenProvider.generateAccessToken(authentication);
+    }
+
+    // 비밀번호 찾기
+    public String findPassword(MemberDto memberDto) {
+        String email = memberDto.getMemberEmail();
+        log.info("find password email : {}", email);
+        Optional<MemberEntity> memberEntity = memberRepository.findByMemberEmail(email);
+        if (memberEntity.isPresent()) {
+            MemberEntity member = memberEntity.get();
+            String password = generateRandomPassword();
+            member.setMemberPassword(passwordEncoder.encode(password));
+            return password;
+        }
+        else {
+            return null;
+        }
     }
 }

@@ -106,6 +106,25 @@ public class MailService {
         else {
             return false;
         }
+    }
 
+    // 비밀번호 찾기
+    public boolean findEmail(String to) throws Exception {
+        // to는 email로 중복 체크를 한다.
+        boolean isTrue = memberRepository.existsByMemberEmail(to);
+        if (isTrue) {
+            ePw = createKey(); // 랜덤 인증번호 생성
+            MimeMessage message = createMessage(to); // 메일 발송
+            try {
+                emailsender.send(message);
+                EPW = ePw;
+            } catch (MailException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Failed to send email. Please check your email configuration and try again.");
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }

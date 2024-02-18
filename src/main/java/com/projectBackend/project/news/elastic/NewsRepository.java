@@ -1,4 +1,4 @@
-package com.projectBackend.project.news;
+package com.projectBackend.project.news.elastic;
 
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 

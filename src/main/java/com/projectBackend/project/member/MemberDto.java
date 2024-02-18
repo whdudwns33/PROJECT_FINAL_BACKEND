@@ -22,6 +22,7 @@ public class MemberDto {
     String nickName;
     int point;
     Date birth;
+    String cnum;
     @Enumerated(EnumType.STRING)
     private Authority authority;
 

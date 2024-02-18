@@ -1,6 +1,5 @@
-package com.projectBackend.project.news;
+package com.projectBackend.project.news.elastic;
 
-import com.projectBackend.project.utils.MultiDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -3,11 +3,7 @@ package com.projectBackend.project.news.crawling;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.projectBackend.project.crawling.crawlAgr.CrawlArgDto;
-import com.projectBackend.project.crawling.crawlAgr.CrawlArgEntity;
-import com.projectBackend.project.news.NewsDto;
-import com.projectBackend.project.news.NewsEntity;
-import com.projectBackend.project.stock.StockDto;
+import com.projectBackend.project.news.elastic.NewsDto;
 import com.projectBackend.project.utils.Common;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service

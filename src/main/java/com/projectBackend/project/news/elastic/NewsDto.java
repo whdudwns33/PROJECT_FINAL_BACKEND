@@ -1,4 +1,4 @@
-package com.projectBackend.project.news;
+package com.projectBackend.project.news.elastic;
 
 import lombok.Builder;
 import lombok.Getter;

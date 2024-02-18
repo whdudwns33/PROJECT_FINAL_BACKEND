@@ -13,6 +13,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     Optional<MemberEntity> findByMemberNickName(String nickName);
     boolean existsByMemberEmail(String email);
     boolean existsByMemberNickName(String nickName);
+    List<MemberEntity> findAllByPhone(String phone);
 
     @Query("SELECT m FROM MemberEntity m WHERE " +
             "LOWER(m.memberEmail) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
