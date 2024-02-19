@@ -1,5 +1,6 @@
 package com.projectBackend.project.stock.elastic;
 
+import com.projectBackend.project.news.elastic.NewsDto;
 import com.projectBackend.project.stock.StockDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +12,11 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
@@ -178,7 +182,7 @@ public class StockElasticService {
             // Elasticsearch에 "news_index" 인덱스 생성 요청
             CreateIndexRequest createIndexRequest = new CreateIndexRequest("stock_index");
             // "settings" 및 "mappings"를 JSON 형식으로 설정
-            String settingsAndMappings = "{\"settings\": {\"analysis\": {\"tokenizer\": {\"nori_user_dict_tokenizer\": {\"type\": \"nori_tokenizer\",\"decompound_mode\": \"mixed\",\"discard_punctuation\": \"false\"}},\"filter\": {\"korean_stop\": {\"type\": \"stop\",\"stopwords_path\": \"/Users/hwangjunho/coding/kh/final/ELK/elasticsearch-7.17.12/config/analysis/korean_stopwords.txt\"},\"nori_filter\": {\"type\": \"nori_part_of_speech\",\"stoptags\": [\"E\", \"IC\", \"J\", \"MAG\", \"MAJ\", \"MM\", \"SP\", \"SSC\", \"SSO\", \"SC\", \"SE\", \"XPN\", \"XSA\", \"XSN\", \"XSV\", \"UNA\", \"NA\", \"VSV\", \"NP\"]},\"ngram_filter\": {\"type\": \"ngram\",\"min_gram\": 2,\"max_gram\": 3}},\"analyzer\": {\"nori_analyzer_with_stopwords\": {\"type\": \"custom\",\"tokenizer\": \"nori_user_dict_tokenizer\",\"filter\": [\"nori_readingform\", \"korean_stop\", \"nori_filter\", \"trim\"]},\"nori_ngram_analyzer\": {\"type\": \"custom\",\"tokenizer\": \"nori_user_dict_tokenizer\",\"filter\": [\"nori_readingform\", \"ngram_filter\", \"trim\"]}}}}," +
+            String settingsAndMappings = "{\"settings\": {\"analysis\": {\"tokenizer\": {\"nori_user_dict_tokenizer\": {\"type\": \"nori_tokenizer\",\"decompound_mode\": \"mixed\",\"discard_punctuation\": \"false\"}},\"filter\": {\"korean_stop\": {\"type\": \"stop\",\"stopwords_path\": \"D:\\\\tools\\\\elasticsearch-7.17.12\\\\config\\\\analysis\\\\korean_stopwords.txt\"},\"nori_filter\": {\"type\": \"nori_part_of_speech\",\"stoptags\": [\"E\", \"IC\", \"J\", \"MAG\", \"MAJ\", \"MM\", \"SP\", \"SSC\", \"SSO\", \"SC\", \"SE\", \"XPN\", \"XSA\", \"XSN\", \"XSV\", \"UNA\", \"NA\", \"VSV\", \"NP\"]},\"ngram_filter\": {\"type\": \"ngram\",\"min_gram\": 2,\"max_gram\": 3}},\"analyzer\": {\"nori_analyzer_with_stopwords\": {\"type\": \"custom\",\"tokenizer\": \"nori_user_dict_tokenizer\",\"filter\": [\"nori_readingform\", \"korean_stop\", \"nori_filter\", \"trim\"]},\"nori_ngram_analyzer\": {\"type\": \"custom\",\"tokenizer\": \"nori_user_dict_tokenizer\",\"filter\": [\"nori_readingform\", \"ngram_filter\", \"trim\"]}}}}," +
             "\"mappings\": {\"properties\": {\"stockName\": {\"type\": \"text\",\"analyzer\": \"nori_analyzer_with_stopwords\"},\"id\": {\"type\": \"keyword\"},\"stockOpen\": {\"type\": \"long\"},\"stockHigh\": {\"type\": \"long\"},\"stockLow\": {\"type\": \"long\"},\"stockClose\": {\"type\": \"long\"},\"stockVolume\": {\"type\": \"long\"},\"stockTradingValue\": {\"type\": \"long\"},\"stockFluctuationRate\": {\"type\": \"double\"},\"stockDate\": {\"type\": \"long\"},\"stockCode\": {\"type\": \"text\"},\"stockBps\": {\"type\": \"double\"},\"stockPer\": {\"type\": \"double\"},\"stockPbr\": {\"type\": \"double\"},\"stockEps\": {\"type\": \"double\"},\"stockDiv\": {\"type\": \"double\"},\"stockDps\": {\"type\": \"double\"}}}}";
 
 
@@ -200,6 +204,49 @@ public class StockElasticService {
         catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+
+    // 검색 쿼리
+    // 특정 필드에서 특정 토큰을 사용한 Elasticsearch 검색 수행
+    public List<String> searchStockByTokenizer(String query) throws IOException {
+        log.info("stock query : {}", query);
+
+        if (query != null) {
+            List<String> stockList = new ArrayList<>();
+
+            // Elasticsearch에 요청을 보낼 SearchRequest 객체 생성
+            SearchRequest searchRequest = new SearchRequest("stock_index");
+
+            // SearchSourceBuilder를 사용하여 검색에 대한 세부 설정 구성
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+            // 직접 쿼리를 JSON 형식으로 추가
+            QueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("stockName", query).fuzziness("AUTO").prefixLength(3);
+            searchSourceBuilder.query(matchQueryBuilder);
+
+            // SearchRequest에 SearchSourceBuilder를 설정
+            searchRequest.source(searchSourceBuilder);
+
+            // RestHighLevelClient를 사용하여 Elasticsearch에 검색 요청을 보내고 결과를 받음
+            SearchResponse searchResponse = elasticsearchClient.search(searchRequest, RequestOptions.DEFAULT);
+            SearchHits hits = searchResponse.getHits();
+            log.info("hits : {}", hits);
+
+            // SearchHits에서 결과를 추출
+            for (SearchHit hit : hits) {
+                // 각 hit에서 필요한 정보를 추출
+                Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+
+                // 추출한 정보를 사용하여 NewsDto를 생성하거나 처리
+                // 예시: title, link, description, pubDate 등 필드를 추출
+                String name = (String) sourceAsMap.get("stockName");
+                stockList.add(name);
+            }
+            return stockList;
+        } else {
+            return null;
         }
     }
 }

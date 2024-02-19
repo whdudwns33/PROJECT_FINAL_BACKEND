@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +48,12 @@ public class StockController {
         } else {
             return ResponseEntity.ok(stocks);
         }
+    }
+
+    // 검색
+    @GetMapping("/search")
+    public ResponseEntity<List<String>> getStockSearch(@RequestParam String query) throws IOException {
+        return ResponseEntity.ok(stockElasticService.searchStockByTokenizer(query));
     }
 
     @PostMapping("/chart")
