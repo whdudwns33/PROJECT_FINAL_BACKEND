@@ -5,9 +5,11 @@ import com.projectBackend.project.crawling.crawlDomesticIndicators.CrawlDomestic
 import com.projectBackend.project.crawling.crawlEnergy.CrawlEnergyService;
 import com.projectBackend.project.crawling.crawlExchange.CrawlExchangeService;
 import com.projectBackend.project.crawling.crawlGold.CrawlGoldService;
+import com.projectBackend.project.crawling.crawlMajorNews.CrawlMajorNewsService;
 import com.projectBackend.project.crawling.crawlMarket.CrawlMarketService;
 import com.projectBackend.project.crawling.crawlMetal.CrawlMetalService;
 import com.projectBackend.project.crawling.crawlOil.CrawlOilService;
+import com.projectBackend.project.crawling.crawlOverseasIndicators.CrawlOverseasIndicatorsService;
 import com.projectBackend.project.crawling.crawlRate.CrawlRateService;
 import com.projectBackend.project.crawling.crawlSearch.CrawlSearchService;
 import com.projectBackend.project.crawling.crawlStock.CrawlStockService;
@@ -36,7 +38,10 @@ public class CommonService {
     private final CrawlMarketService crawlMarketService;
     private final CrawlGoldService crawlGoldService;
     private final CrawlSearchService crawlSearchService;
+    private final CrawlMajorNewsService crawlMajorNewsService;
     private final CrawlDomesticIndicatorsService crawlDomesticIndicatorsService;
+    private final CrawlOverseasIndicatorsService crawlOverseasIndicatorsService;
+    private final CrawlRateService crawlRateService;
     private final TokenProvider tokenProvider;
 
     // 회원의 엑세스 토큰에서 이메일값 파싱
@@ -74,5 +79,27 @@ public class CommonService {
             e.printStackTrace();
             return null;
        }
+    }
+    public MultiDto getMainData() {
+        try {
+            MultiDto multiDto = new MultiDto();
+            // 주요뉴스
+            multiDto.setCrawlMajorNewsDtoList(crawlMajorNewsService.getCrawlMajorNewsList());
+            // 해외지수
+            multiDto.setCrawlOverseasIndicatorsDtoList(crawlOverseasIndicatorsService.getCrawlOverseasIndicatorsList());
+            // 거래 상위
+            multiDto.setCrawlStockDtoList(crawlStockService.getCrawlStockList());
+            // 국내지수
+            multiDto.setCrawlDomesticIndicatorsDtoList(crawlDomesticIndicatorsService.getCrawlDomesticIndicatorsList());
+            // 금리
+            multiDto.setCrawlRateDtoList(crawlRateService.getCrawlRateList());
+            // 검색 상위
+            multiDto.setCrawlSearchDtos(crawlSearchService.getCrawlSearchList());
+
+            return multiDto;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

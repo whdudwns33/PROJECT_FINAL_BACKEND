@@ -21,4 +21,9 @@ public class CommonContoroller {
         return ResponseEntity.ok(commonService.getIndex());
     }
 
+    @GetMapping("/main")
+    public ResponseEntity<MultiDto> stockMain() {
+        return ResponseEntity.ok(commonService.getMainData());
+    }
+
 }

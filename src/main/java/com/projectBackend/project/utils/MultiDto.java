@@ -7,9 +7,12 @@ import com.projectBackend.project.crawling.crawlDomesticIndicators.CrawlDomestic
 import com.projectBackend.project.crawling.crawlEnergy.CrawlEnergyDto;
 import com.projectBackend.project.crawling.crawlExchange.CrawlExchangeDto;
 import com.projectBackend.project.crawling.crawlGold.CrawlGoldDto;
+import com.projectBackend.project.crawling.crawlMajorNews.CrawlMajorNewsDto;
 import com.projectBackend.project.crawling.crawlMarket.CrawlMarketDto;
 import com.projectBackend.project.crawling.crawlMetal.CrawlMetalDto;
 import com.projectBackend.project.crawling.crawlOil.CrawlOilDto;
+import com.projectBackend.project.crawling.crawlOverseasIndicators.CrawlOverseasIndicatorsDto;
+import com.projectBackend.project.crawling.crawlRate.CrawlRateDto;
 import com.projectBackend.project.crawling.crawlSearch.CrawlSearchDto;
 import com.projectBackend.project.crawling.crawlStock.CrawlStockDto;
 import com.projectBackend.project.member.MemberDto;
@@ -65,6 +68,10 @@ public class MultiDto {
     private CrawlDomesticIndicatorsDto crawlDomesticIndicatorsDto;
     private List<CrawlDomesticIndicatorsDto> crawlDomesticIndicatorsDtoList;
 
+    // 해외지수
+    private CrawlOverseasIndicatorsDto crawlOverseasIndicatorsDto;
+    private List<CrawlOverseasIndicatorsDto> crawlOverseasIndicatorsDtoList;
+
     // 검색 상위
     private CrawlSearchDto crawlSearchDto;
     private List<CrawlSearchDto> crawlSearchDtos;
@@ -80,5 +87,13 @@ public class MultiDto {
     // 종목 토론 정보
     private CommunityDto communityDto;
     private List<CommunityDto> communityDtoList;
+
+    // 주요 뉴스
+    private CrawlMajorNewsDto crawlMajorNewsDto;
+    private List<CrawlMajorNewsDto> crawlMajorNewsDtoList;
+
+    // 금리
+    private CrawlRateDto crawlRateDto;
+    private List<CrawlRateDto> crawlRateDtoList;
 
 }
