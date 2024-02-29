@@ -31,7 +31,7 @@ public class SwaggerCongifuration {
         log.info("스웨거 apiInfo() 함수 호출 !!");
         return new ApiInfoBuilder()
                 .title("Spring Boot Open API Test with Swagger")
-                .description("설명 부분")
+                .description("MARSTOCK Spring Boot API 명세")
                 .version("1.0.0")
                 .build();
     }
